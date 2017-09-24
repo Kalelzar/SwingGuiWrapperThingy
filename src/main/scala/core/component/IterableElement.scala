@@ -1,5 +1,7 @@
 package core.component
 
-trait IterableElement {
+trait IterableElement{
+
+  def next: IterableElement
 
 }
