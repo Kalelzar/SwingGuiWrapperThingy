@@ -1,13 +1,9 @@
 package core.shape
 
-import java.awt.{BasicStroke, Color, Dimension, GradientPaint, Graphics2D, Point, RenderingHints}
 import java.awt.geom.GeneralPath
+import java.awt.{BasicStroke, Color, Dimension, Graphics2D, Point, RenderingHints}
 
 import core.animation.Animation
-import core.component.BasicComponent
-
-import scala.collection.mutable.ListBuffer
-import scala.runtime.FloatRef
 /**
   * Created by kalelzar on 5/5/17.
   *
@@ -111,9 +107,11 @@ trait Shape{
   def setFillColor(color: Color): Unit = {
     fillColor = color
   }
+
   def setBorderColor(color: Color): Unit = {
     borderColor = color
   }
+
   def setFill(fill: Boolean): Unit = {
     this.fill = fill
   }
