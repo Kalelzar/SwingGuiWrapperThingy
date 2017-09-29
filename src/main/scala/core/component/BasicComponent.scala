@@ -27,23 +27,6 @@ trait BasicComponent {
   private var visualPanel: VisualPanel = _
 
   /**
-    *
-    * Set the VisualPanel within which this component is currently contained.
-    *
-    *
-    * @param visualPanel the VisualPanel
-    */
-  //TODO: Maybe change this around so that a single component can exist in multiple VisualPanels
-  def setVisualPanel(visualPanel: VisualPanel): Unit = this.visualPanel = visualPanel
-
-  /**
-    *
-    * @return The VisualPanel within which this component is currently contained.
-    */
-  //TODO: Maybe change this around so that a single component can exist in multiple VisualPanels
-  def getVisualPanel: VisualPanel = visualPanel
-
-  /**
     * The unique identifier provided to the component upon its initialization.
     * It can be used to get a reference to the instance of the component it is assigned to
     * by utilizing the <code> BasicComponent.getBasicComponentByID(id) <code> method in the
@@ -55,21 +38,6 @@ trait BasicComponent {
     * A mutable list of all EventListeners listening on this component
     */
   private val listeners = mutable.ListBuffer[EventListener]()
-
-  override def toString: String = {
-    //s"Has Focus: $hasFocus"
-    "BasicComponent"
-  }
-
-  /**
-    * Moves the shape's center to the location pointed to by the Point
-    *
-    * @param point - the location
-    */
-  def moveTo(point: Point): Unit = {
-    getComponentShape.moveTo(point.x, point.y)
-  }
-
 
   /**
     * The appearance of the component in the form of a Shape
@@ -90,7 +58,25 @@ trait BasicComponent {
     */
   private var font: Font = new Font(Font.MONOSPACED, Font.PLAIN, 12)
 
+
   /* Setters */
+
+  /**
+    * Moves the shape's center to the location pointed to by the Point
+    *
+    * @param point - the location
+    */
+  def moveTo(point: Point): Unit = {
+    getComponentShape.moveTo(point.x, point.y)
+  }
+
+  /**
+    *
+    * @return The VisualPanel within which this component is currently contained.
+    */
+  //TODO: Maybe change this around so that a single component can exist in multiple VisualPanels
+  def getVisualPanel: VisualPanel = visualPanel
+
   /**
     * Sets the shape (visual representation) of this component to the provided
     *
@@ -150,7 +136,10 @@ trait BasicComponent {
     shape.setFill(fill)
   }
 
+
   /* Getters */
+
+
   /**
     *
     * Returns the list of listeners currently listening on this component.
@@ -209,8 +198,24 @@ trait BasicComponent {
     */
   def getComponentFont: Font = font
 
+  /**
+    *
+    * Set the VisualPanel within which this component is currently contained.
+    *
+    * @param visualPanel the VisualPanel
+    */
+  //TODO: Maybe change this around so that a single component can exist in multiple VisualPanels
+  def setVisualPanel(visualPanel: VisualPanel): Unit = this.visualPanel = visualPanel
+
+  override def toString: String = {
+    //s"Has Focus: $hasFocus"
+    "BasicComponent"
+  }
+
 
   /* Placeholder */
+
+
   /**
     * The main draw method of the component. All it does by default is to call the
     * current shape's draw method and relegate all drawing to it.
