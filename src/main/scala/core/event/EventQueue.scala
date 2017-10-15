@@ -1,5 +1,7 @@
 package core.event
 
+import com.sun.java.swing.plaf.motif.MotifBorders.FocusBorder
+import core.component.utils.Focus
 import core.event.listener.EventListener
 
 import scala.collection.mutable
@@ -29,10 +31,10 @@ object EventQueue {
   }
 
   def consumeNextEvent(): Unit = {
+
     if (eventQueue.length <1) return
     val event = eventQueue.dequeue()
     if( event == null) return
-
     val list = listeners(event.getType).filter(_.hasFocus)
     if(list.length<1) return
     list.foreach(_.consume(event))
