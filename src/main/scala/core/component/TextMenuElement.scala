@@ -1,10 +1,10 @@
 package core.component
 
-import java.awt.{Font, Point}
+import java.awt.{Color, Font, Point}
 
 class TextMenuElement(x: Int, y: Int, text: String="", font: Font = BasicComponent.getDefaultFont)
   extends TextLabel(x, y, text, font) with MenuElement {
-
+  setBorderColor(Color.WHITE)
   override def whenBoxed(index: Int, menu: Menu): Unit ={
     println(index)
     val mx = menu.getShapeLocation.x
