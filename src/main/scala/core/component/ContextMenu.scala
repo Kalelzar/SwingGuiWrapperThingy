@@ -8,7 +8,7 @@ import core.event.Event
 import core.event.listener.MouseEventListener
 import core.shape.Rectangle
 
-class ContextMenu(width: Float, height: Float, parent: BasicComponent) extends Menu {
+class ContextMenu(var width: Float, var height: Float, parent: BasicComponent) extends Menu {
 
   val blank = new Rectangle(0, 0, 0, 0)
   setShape(blank)
@@ -26,10 +26,14 @@ class ContextMenu(width: Float, height: Float, parent: BasicComponent) extends M
   class ContextMenuListener extends MouseEventListener{
 
     override def mouseClicked(event: Event): Unit = {
-      if(event.getData.at(0).asInstanceOf[Int] != 1) return
-      if(!isInside(new Point(event.getData.at(1).asInstanceOf[Int], event.getData.at(2).asInstanceOf[Int]))){
-        Focus.giveFocus(BasicComponent.getID(parent))
-        setShape(blank)
+      val point = new Point(event.getData.at(1).asInstanceOf[Int], event.getData.at(2).asInstanceOf[Int])
+      if(!isInside(point)){
+        if(event.getData.at(0).asInstanceOf[Int] == 1){
+          Focus.giveFocus(BasicComponent.getID(parent))
+          setShape(blank)
+        }else if(event.getData.at(0).asInstanceOf[Int] == 3){
+          show(point.getX.toInt, point.getY.toInt)
+        }
       }
     }
 
@@ -41,13 +45,35 @@ class ContextMenu(width: Float, height: Float, parent: BasicComponent) extends M
   private val listener = new ContextMenuListener
   addListener(listener)
 
-  def show(x: Int, y: Int): Unit ={
+  def box(): Unit ={
+    if(getElements.isEmpty) throw new NullPointerException("There are no elements to box")
+    val dim = getElements.head.getComponentShape.getDimension
+    if(getElements.forall(_.getComponentShape.getDimension.equals(dim))){
+      width = dim.width
+      height = dim.height*getElements.length
+    }
+    var ind = 0
+    iterateOverElements{ me: MenuElement =>
+      me.whenBoxed(ind, this)
+      ind+=1
+    }
+  }
 
+
+  override def addElement(element: MenuElement): Unit = {
+    super.addElement(element)
+    box()
+  }
+
+
+  def show(x: Int, y: Int): Unit ={
     setShape( new Rectangle(x+width/2, y+height/2, width, height))
     setFill(true)
     setFillColor(Color.WHITE)
+    box()
+    println(getShapeLocation)
+    if(hasFocus) return
     Focus.giveFocus(BasicComponent.getID(this))
-    println(Focus.getFocused)
   }
 
   override def toString = "ContextMenu"

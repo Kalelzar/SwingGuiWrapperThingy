@@ -32,6 +32,12 @@ object Test extends App{
   vp.addComponent(textLabel, 0, new AbsoluteLocator(textLabel))
   vp.addComponent(contextMenu, 1, new AbsoluteLocator(contextMenu))
 
+  val menuElement1 = TextMenuElement.build(100, 0, contextMenu, "Save")
+  val menuElement2 = TextMenuElement.build(100, 1, contextMenu, "Undo")
+  val menuElement3 = TextMenuElement.build(100, 2, contextMenu, "Redo")
+  val menuElement4 = TextMenuElement.build(100, 2, contextMenu, "Exit")
+  contextMenu.addAllElements(menuElement1, menuElement2, menuElement3, menuElement4)
+
   println(textField.getShapeLocation)
   println(textLabel.getShapeLocation)
 

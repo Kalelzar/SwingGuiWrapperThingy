@@ -11,6 +11,11 @@ trait Menu extends BasicComponent{
   def addElement(element: MenuElement): Unit ={
     elements+=element
   }
+
+  def addAllElements(elements: TextMenuElement*): Unit = {
+    elements.foreach(addElement)
+  }
+
   def removeElement(element: MenuElement): Unit ={
     elements-=element
   }

@@ -56,7 +56,7 @@ trait BasicComponent {
   /**
     * The font in which every text in this component ( Unless explicitly stated otherwise ) is written in.
     */
-  private var font: Font = new Font(Font.MONOSPACED, Font.PLAIN, 12)
+  private var font: Font = BasicComponent.getDefaultFont
 
 
   /* Setters */
@@ -234,6 +234,13 @@ trait BasicComponent {
 }
 
 object BasicComponent{
+  /**
+    * Returns the default Font used by BasicComponents
+    *
+    * @return the default font
+    */
+  val getDefaultFont: Font = new Font(Font.MONOSPACED, Font.PLAIN, 12)
+
   /**
     * A list of all BasicComponents ever instantiated
     */
