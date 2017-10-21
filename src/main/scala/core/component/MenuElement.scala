@@ -6,6 +6,9 @@ trait MenuElement extends BasicComponent{
     f(mouseButton)
   }
 
+  def show(): Unit
+  def hide(): Unit
+
   def whenBoxed(index: Int, menu: Menu)
 
 }

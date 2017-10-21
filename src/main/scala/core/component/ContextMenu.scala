@@ -31,6 +31,7 @@ class ContextMenu(var width: Float, var height: Float, parent: BasicComponent) e
         if(event.getData.at(0).asInstanceOf[Int] == 1){
           Focus.giveFocus(BasicComponent.getID(parent))
           setShape(blank)
+          iterateOverElements( (me: MenuElement) =>me.hide())
         }else if(event.getData.at(0).asInstanceOf[Int] == 3){
           show(point.getX.toInt, point.getY.toInt)
         }
