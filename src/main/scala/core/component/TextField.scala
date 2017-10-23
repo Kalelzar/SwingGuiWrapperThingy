@@ -7,27 +7,25 @@ import core.shape.Rectangle
 
 class TextField extends EditableTextView{
 
-  //setComponentFont(font)
-  provide("text", "", setText)
   provide("chars", 10)
+  provide("text", "", onSetText)
   provide("font", BasicComponent.getDefaultFont, refreshFontSize)
 
+  refreshFontSize(BasicComponent.getDefaultFont)
 
   override def refreshFontSize(font: Font): Unit = {
     super.refreshFontSize(font)
-    width = getAttribute[Int]("chars")*columnWidth
-    println(width, columnHeight)
+    width = ?|[Int]("chars") * ?|[Int]("columnWidth")
+    +|("shape", new Rectangle( ?|("x"), ?|("y"), width, ?|[Int]("columnHeight")))
+    +|("fill", true)
+    +|("fillColor", Color.WHITE)
   }
 
-  private var width = getAttribute[Int]("chars")*columnWidth
+  private var width = ?|[Int]("chars") * ?|[Int]("columnWidth")
 
-  setShape( new Rectangle(getAttribute("x"), getAttribute("y"), width, columnHeight))
-  setFill(true)
-  setFillColor(Color.WHITE)
-  //offsetTextY(-columnHeight/4)
 
   override def onCharacterTyped(change: Int): Unit = {
-    println(getAttribute("chars"), columnWidth, width)
+    println(?|("chars"), ?|[Int]("columnWidth"), width)
   }
 
 

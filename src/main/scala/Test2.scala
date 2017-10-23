@@ -28,8 +28,8 @@ object Test2 extends App{
     .withAttribute("y",300f)
     .withAttribute("layer", 0)
     .forLayout(al)
-    .withAttribute("font", font)
     .withAttribute("chars", 10)
+    .withAttribute("font", font)
     .acquireReference
 
   println(tl.getAttributes)

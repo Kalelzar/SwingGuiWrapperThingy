@@ -5,11 +5,10 @@ import java.awt.{Color, Graphics2D}
 
 import core.event.Event
 import core.event.listener.KeyEventListener
+import core.shape.Shape
 
 //TODO: Add Text Selection with the mouse and keyboard
 trait EditableTextView extends TextView {
-
-
 
 
   private class Caret{
@@ -18,7 +17,7 @@ trait EditableTextView extends TextView {
     def next(inc: Int): Unit = {
       position+=inc
       if(position<0) position=0
-      if(position>getText.length+1) position = getText.length+1
+      if(position> ?|[String]("text").length+1) position = ?|[String]("text").length+1
     }
     def previous(red: Int): Unit = next(-red)
 
@@ -67,14 +66,14 @@ trait EditableTextView extends TextView {
 
   def insertTextAtCaret(txt: String): Unit ={
     val builder = new StringBuilder
-    builder.append(getText)
+    builder.append(?|[String]("text"))
     builder.insert(caret.getPosition, txt)
     caret.next(txt.length)
-    setText(builder.toString())
+    +|("text", builder.toString())
   }
 
   def append(txt:String): Unit ={
-    setText(getText+txt)
+    +|("text", ?|[String]("text")+txt)
   }
 
   //TODO: TEXT
@@ -86,29 +85,29 @@ trait EditableTextView extends TextView {
   def removeText(startInd: Int, endInd: Int): Unit ={
     var ind = 0
     val string = new StringBuilder
-    getText.toCharArray.foreach(x =>{
+    ?|[String]("text").toCharArray.foreach(x =>{
       if(ind < startInd ||  ind>endInd) string.append(x)
       ind+=1
     })
-    setText(string.toString())
+    +|("text", string.toString())
   }
   private val blinkTime = 550l
   private var caretVisible = true
   private var previousTime = System.currentTimeMillis()
   private var currentTime = System.currentTimeMillis()
   override def draw(graphics2D: Graphics2D): Unit = {
-    if(!hasFocus) setBorderColor(shape.getFillColor)
-    else setBorderColor(Color.BLACK)
+    if(!hasFocus && ?|("borderColor") != ?|[Shape]("shape").getFillColor) +|("borderColor", ?|[Shape]("shape").getFillColor)
+    else if(hasFocus && ?|("borderColor") != Color.BLACK)  +|("borderColor", Color.BLACK)
     super.draw(graphics2D)
     if(currentTime-previousTime>=blinkTime){
       previousTime = currentTime
       caretVisible = !caretVisible
     }
     if(caretVisible && hasFocus)
-      graphics2D.drawLine(caret.getPosition*columnWidth+(getShapeLocation.x-shape.getDimension.width/2),
-        (getShapeLocation.y-columnHeight/2.3f).toInt,
-        caret.getPosition*columnWidth+(getShapeLocation.x-shape.getDimension.width/2),
-        (getShapeLocation.y+columnHeight/2.3f).toInt)
+      graphics2D.drawLine(caret.getPosition* ?|[Int]("columnWidth")+(getShapeLocation.x- ?|[Shape]("shape").getDimension.width/2),
+        (getShapeLocation.y- ?|[Int]("columnHeight") /2.3f).toInt,
+        caret.getPosition* ?|[Int]("columnWidth")+(getShapeLocation.x- ?|[Shape]("shape").getDimension.width/2),
+        (getShapeLocation.y+ ?|[Int]("columnHeight")/2.3f).toInt)
     currentTime = System.currentTimeMillis()
   }
 }

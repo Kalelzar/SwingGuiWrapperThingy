@@ -6,21 +6,20 @@ import core.shape.Rectangle
 
 class TextLabel extends TextView{
   //setComponentFont(font)
-  provide("text", "", setText)
+  provide("text", "", onSetText)
 
-  private var width = getAttribute[String]("text").length*columnWidth
-  private var height = (getAttribute[String]("text").count(_=='\n')+1)*columnHeight
-  setShape(new Rectangle(getAttribute[Float]("x"), getAttribute[Float]("y"), width, height))
+  private var width = ?|[String]("text").length * ?|[Int]("columnWidth")
+  private var height = (?|[String]("text").count(_=='\n')+1)* ?|[Int]("columnHeight")
+  +|("shape", new Rectangle(?|[Float]("x"), ?|[Float]("y"), width, height))
 
 
 
-  override def setText(newText: String): Unit = {
-
-    super.setText(newText)
-    width = getAttribute[String]("text").length*columnWidth
-    height = (getAttribute[String]("text").count(_=='\n')+1)*columnHeight
-    setShape(new Rectangle(getAttribute[Float]("x"), getAttribute[Float]("y"), width, height))
-    setBorderColor(Window.getMainWindow.getBackground)
+  override def onSetText(newText: String): Unit = {
+    refreshFontSize( ?|("font"))
+    width = ?|[String]("text").length * ?|[Int]("columnWidth")
+    height = (?|[String]("text").count(_=='\n')+1) * ?|[Int]("columnHeight")
+    +|("shape", new Rectangle( ?|[Float]("x"), ?|[Float]("y"), width, height))
+    +|("borderColor", Window.getMainWindow.getBackground)
   }
 
 

@@ -4,10 +4,11 @@ import java.awt.image.BufferStrategy
 import java.awt.{Dimension, Graphics2D}
 import javax.swing.{JFrame, SwingUtilities}
 
-import core.event.listener.FocusOnMouseListener
+import core.event.listener.{EventListener, FocusOnMouseListener}
 import core.event.{EventQueue, EventType}
 import core.shape.Shape
 
+import scala.collection.mutable
 import scala.collection.mutable.Map
 
 /**
@@ -25,12 +26,12 @@ class Window(dimension: Dimension) extends JFrame with BasicComponent {
 
   override def hasFocus: Boolean = super.hasFocus
 
-  private val panels : Map[String, VisualPanel] = Map()
+  private val panels : mutable.Map[String, VisualPanel] = mutable.Map()
   private var currentPanel: String = ""
 
   def addVisualPanel(vp: VisualPanel): Unit = {
     panels(vp.getName) = vp
-    if(!getListeners.exists(_.isInstanceOf[FocusOnMouseListener])){
+    if(! ?|[mutable.ListBuffer[EventListener]]("listeners").exists(_.isInstanceOf[FocusOnMouseListener])){
       addListener(new FocusOnMouseListener)
     }
   }
@@ -78,7 +79,7 @@ class Window(dimension: Dimension) extends JFrame with BasicComponent {
 
   def this(shape: Shape){
     this(shape.getDimension)
-    this.setShape(shape)
+    this.+|("shape", shape)
   }
 
   def this(w: Int, h: Int){
@@ -91,9 +92,12 @@ class Window(dimension: Dimension) extends JFrame with BasicComponent {
 }
 
 object Window{
-  private var mainWindow: Window = _
 
-  def getMainWindow: Window = mainWindow
+
+  private var mainWindow: Window = _
+  private val dummyVisualPanel = new VisualPanel(new Dimension(0,0), "_Dummy")
+  def getDummyVisualPanel: VisualPanel = dummyVisualPanel
+  implicit def getMainWindow: Window = mainWindow
   def setMainWindow(mainWindow:Window): Unit = this.mainWindow = mainWindow
 
 }

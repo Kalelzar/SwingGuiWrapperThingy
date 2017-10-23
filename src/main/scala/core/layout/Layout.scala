@@ -29,7 +29,7 @@ trait Layout {
   }
 
   def addComponent(component: BasicComponent, layer: Int, location: Locator ): Unit = {
-    component.setVisualPanel(administeredVisualPanel)
+    component.+|("visualPanel", administeredVisualPanel)
     getLayerByID(layer).getLayoutPane.addLayerElement(component, location)
   }
 

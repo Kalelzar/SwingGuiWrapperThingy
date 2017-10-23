@@ -6,12 +6,12 @@ import java.awt.{Color, Point}
 import core.component.utils.Focus
 import core.event.Event
 import core.event.listener.MouseEventListener
-import core.shape.Rectangle
+import core.shape.{Rectangle, Shape}
 
 class ContextMenu(var width: Float, var height: Float, parent: BasicComponent) extends Menu {
 
   val blank = new Rectangle(0, 0, 0, 0)
-  setShape(blank)
+  +|("shape", blank)
 
   class ContextMenuCreationListener extends MouseEventListener{
 
@@ -30,7 +30,7 @@ class ContextMenu(var width: Float, var height: Float, parent: BasicComponent) e
       if(!isInside(point)){
         if(event.getData.at(0).asInstanceOf[Int] == 1){
           Focus.giveFocus(BasicComponent.getID(parent))
-          setShape(blank)
+          +|("shape", blank)
           iterateOverElements( (me: MenuElement) =>me.hide())
         }else if(event.getData.at(0).asInstanceOf[Int] == 3){
           show(point.getX.toInt, point.getY.toInt)
@@ -48,8 +48,8 @@ class ContextMenu(var width: Float, var height: Float, parent: BasicComponent) e
 
   def box(): Unit ={
     if(getElements.isEmpty) throw new NullPointerException("There are no elements to box")
-    val dim = getElements.head.getComponentShape.getDimension
-    if(getElements.forall(_.getComponentShape.getDimension.equals(dim))){
+    val dim = getElements.head.?|[Shape]("shape").getDimension
+    if(getElements.forall(_.?|[Shape]("shape").getDimension.equals(dim))){
       width = dim.width
       height = dim.height*getElements.length
     }
@@ -68,9 +68,9 @@ class ContextMenu(var width: Float, var height: Float, parent: BasicComponent) e
 
 
   def show(x: Int, y: Int): Unit ={
-    setShape( new Rectangle(x+width/2, y+height/2, width, height))
-    setFill(true)
-    setFillColor(Color.WHITE)
+    +|("shape", new Rectangle(x+width/2, y+height/2, width, height))
+    +|("fill", true)
+    +|("fillColor", Color.WHITE)
     box()
     println(getShapeLocation)
     if(hasFocus) return

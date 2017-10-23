@@ -24,31 +24,43 @@ import scala.collection.mutable
   */
 trait BasicComponent {
 
-  /**
-    * The VisualPanel within which ( Its Layout more specifically ), this component exists and is displayed
-    */
-  private var visualPanel: VisualPanel = _
-
   private val attributes = mutable.Map[String, Any]()
   private val attributeFunc = mutable.Map[String, Any => Unit]()
 
-  provide("layer", 0)
+  provide[Int]("layer", 0)
+
+  /**
+    * The unique identifier provided to the component upon its initialization.
+    * It can be used to get a reference to the instance of the component it is assigned to
+    * by utilizing the <code> BasicComponent.getBasicComponentByID(id) <code> method in the
+    * BasicComponent companion object.
+    */
+  provide[Int]("ID", BasicComponent.getID(this))
+
   provide[Shape]("shape", new Rectangle(0,0,0,0))
-  provide("font", BasicComponent.getDefaultFont)
+
+  provide[Font]("font", BasicComponent.getDefaultFont)
+
   provide[Float]("x", 0.0f)
   provide[Float]("y", 0.0f)
+  provide[Float]("borderThickness", 0.01f, setBorderThickness(_))
 
+  provide[Boolean]("fill", false, setFill(_))
 
+  provide[Color]("borderColor", Color.BLACK, setBorderColor(_))
+  provide[Color]("fillColor", Color.WHITE, setFillColor(_))
 
+  provide[mutable.ListBuffer[EventListener]]("listeners", mutable.ListBuffer[EventListener]())
+
+  provide[VisualPanel]("visualPanel", Window.getDummyVisualPanel)
 
   protected def provide[R](name: String, defaultValue: R, func: R => Unit): Unit ={
-    println(s"Provided: $name set to $defaultValue with func = $func")
     attributes(name) = defaultValue
     attributeFunc(name) = func.asInstanceOf[Any => Unit]
+    func(defaultValue)
   }
 
   protected def provide[R](name: String, defaultValue: R): Unit ={
-    println(s"Provided: $name set to $defaultValue with func = dummy")
     attributes(name) = defaultValue
 
     def dummy(v: Any) : Unit = v
@@ -57,49 +69,24 @@ trait BasicComponent {
 
   def getAttributes: mutable.Map[String, Any] = attributes
 
+
   def setAttribute[R](name: String, value: R): Unit ={
     if(attributes.contains(name)) {
-      if(value.getClass.getCanonicalName != attributes(name).getClass.getCanonicalName) {
+      if(!attributes(name).getClass.isInstance(value)) {
         throw new IllegalArgumentException(s"$value is a different type from ${attributes(name)}")
       }
-      println(s"Set: $name set to $value")
       attributes(name) = value
       attributeFunc(name)(value)
     }
     else throw AttributeNotProvidedException(s"Attribute $name is not provided by any component")
   }
+  def +|[R](name: String, value: R): Unit = setAttribute(name, value)
 
   def getAttribute[R](name: String): R ={
     if(attributes.contains(name)) attributes(name).asInstanceOf[R]
     else throw AttributeNotProvidedException(s"Attribute $name is not provided by any component")
   }
-
-  /**
-    * The unique identifier provided to the component upon its initialization.
-    * It can be used to get a reference to the instance of the component it is assigned to
-    * by utilizing the <code> BasicComponent.getBasicComponentByID(id) <code> method in the
-    * BasicComponent companion object.
-    */
-  private val ID: Int = BasicComponent.getID(this)
-
-  /**
-    * A mutable list of all EventListeners listening on this component
-    */
-  private val listeners = mutable.ListBuffer[EventListener]()
-
-  /**
-    * The appearance of the component in the form of a Shape
-    */
-  protected var shape: Shape = _
-
-
-  /**
-    * The parent component of this component
-    * @deprecated
-    */
-  //FIXME: This is not used anywhere. And it probably won't be used. Consider using a ComplexComponent.
-  @deprecated
-  var parentComp: BasicComponent = _
+  def ?|[R](name: String): R = getAttribute(name)
 
 
 
@@ -112,22 +99,8 @@ trait BasicComponent {
     * @param point - the location
     */
   def moveTo(point: Point): Unit = {
-    getComponentShape.moveTo(point.x, point.y)
+    ?|[Shape]("shape").moveTo(point.x, point.y)
   }
-
-  /**
-    *
-    * @return The VisualPanel within which this component is currently contained.
-    */
-  //TODO: Maybe change this around so that a single component can exist in multiple VisualPanels
-  def getVisualPanel: VisualPanel = visualPanel
-
-  /**
-    * Sets the shape (visual representation) of this component to the provided
-    *
-    * @param shape the shape
-    */
-  def setShape(shape: Shape) : Unit = this.shape = shape
 
   /**
     * Adds the provided event listener to the currently maintained list.
@@ -136,7 +109,7 @@ trait BasicComponent {
     */
   def addListener(el:EventListener): Unit ={
     el.register(this)
-    listeners+=el
+    ?|[mutable.ListBuffer[EventListener]]("listeners")+=el
   }
 
 
@@ -146,15 +119,15 @@ trait BasicComponent {
     *
     * @param bt the border thickness
     */
-  def setBorderThickness(bt: Float): Unit = shape.setBorderThickness(bt)
+  private def setBorderThickness(bt: Float): Unit = ?|[Shape]("shape").setBorderThickness(bt)
 
   /**
     * Sets the fill color of the shape if fill is enabled to the specified value. The default is Black.
     *
     * @param color the fill color
     */
-  def setFillColor(color: Color): Unit = {
-    shape.setFillColor(color)
+  private def setFillColor(color: Color): Unit = {
+    ?|[Shape]("shape").setFillColor(color)
   }
 
   /**
@@ -162,8 +135,8 @@ trait BasicComponent {
     *
     * @param color the border color
     */
-  def setBorderColor(color: Color): Unit = {
-    shape.setBorderColor(color)
+  private def setBorderColor(color: Color): Unit = {
+    ?|[Shape]("shape").setBorderColor(color)
   }
 
   /**
@@ -171,28 +144,12 @@ trait BasicComponent {
     *
     * @param fill should the shape be filled with background color ( true ) or left transparent ( false )
     */
-  def setFill(fill: Boolean): Unit = {
-    shape.setFill(fill)
+  private def setFill(fill: Boolean): Unit = {
+    ?|[Shape]("shape").setFill(fill)
   }
 
 
   /* Getters */
-
-
-  /**
-    *
-    * Returns the list of listeners currently listening on this component.
-    *
-    * @return the list of listeners
-    */
-  def getListeners: mutable.ListBuffer[EventListener] = listeners
-
-  /**
-    * Returns the shape (visual representation) of the component
-    *
-    * @return the shape
-    */
-  def getComponentShape: Shape = shape
 
   /**
     * Tells if this component currently has focus i.e. it is currently in use or it has to consume events
@@ -200,7 +157,7 @@ trait BasicComponent {
     * @return the focus
     */
   def hasFocus: Boolean = {
-    Focus.hasFocus(ID)
+    Focus.hasFocus( ?|("ID") )
   }
 
   /**
@@ -209,7 +166,7 @@ trait BasicComponent {
     * @return the location of the shape
     */
   def getShapeLocation: Point = {
-    getComponentShape.getLocation
+    ?|[Shape]("shape").getLocation
   }
 
   /**
@@ -219,26 +176,8 @@ trait BasicComponent {
     * @return is it contained
     */
   def isInside(p: Point): Boolean = {
-    getComponentShape.polygon.contains(p)
+    ?|[Shape]("shape").polygon.contains(p)
   }
-
-  /**
-    * Returns the unique identifier of the component
-    *
-    * @return the id
-    */
-  def getID: Int = ID
-
-
-
-  /**
-    *
-    * Set the VisualPanel within which this component is currently contained.
-    *
-    * @param visualPanel the VisualPanel
-    */
-  //TODO: Maybe change this around so that a single component can exist in multiple VisualPanels
-  def setVisualPanel(visualPanel: VisualPanel): Unit = this.visualPanel = visualPanel
 
   override def toString: String = {
     //s"Has Focus: $hasFocus"
@@ -259,7 +198,7 @@ trait BasicComponent {
   def draw(graphics2D: Graphics2D): Unit ={
     //println("BasicComponent draw start")
     graphics2D.setFont(getAttribute("font"))
-    shape.draw(graphics2D)
+    ?|[Shape]("shape").draw(graphics2D)
     graphics2D.setFont(BasicComponent.getDefaultFont)
     //println("BasicComponent draw end")
   }
