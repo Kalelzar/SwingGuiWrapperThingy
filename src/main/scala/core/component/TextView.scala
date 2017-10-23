@@ -7,15 +7,12 @@ import sun.swing.SwingUtilities2
 trait TextView extends BasicComponent{
   protected var columnWidth = 0
   protected var columnHeight = 0
-  override def setComponentFont(font: Font): Unit = {
-    super.setComponentFont(font)
-    refreshFontSize()
-  }
-  def refreshFontSize(): Unit = {
-    val metrics: FontMetrics = SwingUtilities2.getFontMetrics(getVisualPanel,getComponentFont)
+
+  def refreshFontSize(font: Font): Unit = {
+    val metrics: FontMetrics = SwingUtilities2.getFontMetrics(getVisualPanel,getAttribute[Font]("font"))
     columnWidth=metrics.charWidth('m')
     columnHeight=metrics.getHeight
-    println("Refreshed")
+    println(s"Refreshed to + $font")
   }
 
   private var text : String = ""
@@ -32,7 +29,7 @@ trait TextView extends BasicComponent{
   override def draw(graphics2D: Graphics2D): Unit = {
     super.draw(graphics2D)
     graphics2D.setColor(textColor)
-    graphics2D.setFont(getComponentFont)
+    graphics2D.setFont(getAttribute("font"))
     graphics2D.drawString(text,
       getShapeLocation.x-shape.getDimension.width/2,
       getShapeLocation.y+columnHeight/4)

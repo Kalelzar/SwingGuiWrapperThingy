@@ -42,11 +42,13 @@ trait BasicComponent {
 
 
   protected def provide[R](name: String, defaultValue: R, func: R => Unit): Unit ={
+    println(s"Provided: $name set to $defaultValue with func = $func")
     attributes(name) = defaultValue
     attributeFunc(name) = func.asInstanceOf[Any => Unit]
   }
 
   protected def provide[R](name: String, defaultValue: R): Unit ={
+    println(s"Provided: $name set to $defaultValue with func = dummy")
     attributes(name) = defaultValue
 
     def dummy(v: Any) : Unit = v
@@ -60,6 +62,7 @@ trait BasicComponent {
       if(value.getClass.getCanonicalName != attributes(name).getClass.getCanonicalName) {
         throw new IllegalArgumentException(s"$value is a different type from ${attributes(name)}")
       }
+      println(s"Set: $name set to $value")
       attributes(name) = value
       attributeFunc(name)(value)
     }
@@ -98,10 +101,7 @@ trait BasicComponent {
   @deprecated
   var parentComp: BasicComponent = _
 
-  /**
-    * The font in which every text in this component ( Unless explicitly stated otherwise ) is written in.
-    */
-  private var font: Font = BasicComponent.getDefaultFont
+
 
 
   /* Setters */
@@ -139,13 +139,7 @@ trait BasicComponent {
     listeners+=el
   }
 
-  /**
-    * Sets the font in which every text in this component ( Unless explicitly stated otherwise )
-    * is written in to the specified font.
-    *
-    * @param font the font
-    */
-  def setComponentFont(font: Font): Unit = this.font = font
+
 
   /**
     * Sets the thickness of the border surrounding the shape to the specified value. The default is 0.01f.
@@ -235,13 +229,7 @@ trait BasicComponent {
     */
   def getID: Int = ID
 
-  /**
-    * Returns the font in which every text in this component ( Unless explicitly stated otherwise )
-    * is written in .
-    *
-    * @return the font
-    */
-  def getComponentFont: Font = font
+
 
   /**
     *
@@ -272,7 +260,7 @@ trait BasicComponent {
     //println("BasicComponent draw start")
     graphics2D.setFont(getAttribute("font"))
     shape.draw(graphics2D)
-    graphics2D.setFont(Window.getMainWindow.getComponentFont)
+    graphics2D.setFont(BasicComponent.getDefaultFont)
     //println("BasicComponent draw end")
   }
 

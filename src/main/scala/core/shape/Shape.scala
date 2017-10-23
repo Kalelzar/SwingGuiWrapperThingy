@@ -7,12 +7,18 @@ import core.animation.Animation
 /**
   * Created by kalelzar on 5/5/17.
   *
-  * Basis of all visual representation
+  * Basis of all visual representation which is not text or an image
   */
 trait Shape{
 
 
-
+  /**
+  *
+  * Returns the center point of the polygon shape
+  *
+  *@return The center point
+  *
+  */
   def getLocation: Point = {
     new Point(polygon.getBounds.getCenterX.toInt, polygon.getBounds.getCenterY.toInt)
   }

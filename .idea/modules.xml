@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/swingwrapper.iml" filepath="$PROJECT_DIR$/.idea/modules/swingwrapper.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/swingwrapper-build.iml" filepath="$PROJECT_DIR$/.idea/modules/swingwrapper-build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/swingguiwrapperthingy.iml" filepath="$PROJECT_DIR$/.idea/modules/swingguiwrapperthingy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/swingguiwrapperthingy-build.iml" filepath="$PROJECT_DIR$/.idea/modules/swingguiwrapperthingy-build.iml" />
     </modules>
   </component>
 </project>

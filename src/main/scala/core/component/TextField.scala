@@ -1,30 +1,33 @@
 package core.component
 
-import java.awt.{Color, Font, FontMetrics}
-import javax.swing.JFrame
+import java.awt.{Color, Font}
 
-import core.shape.{Rectangle, Square}
-import sun.swing.SwingUtilities2
+import core.shape.Rectangle
 
 
-class TextField(x: Float, y: Float, chars: Int, font: Font) extends EditableTextView{
+class TextField extends EditableTextView{
 
-  setComponentFont(font)
+  //setComponentFont(font)
+  provide("text", "", setText)
+  provide("chars", 10)
+  provide("font", BasicComponent.getDefaultFont, refreshFontSize)
 
-  override def refreshFontSize(): Unit = {
-    super.refreshFontSize()
-    width = chars*columnWidth
+
+  override def refreshFontSize(font: Font): Unit = {
+    super.refreshFontSize(font)
+    width = getAttribute[Int]("chars")*columnWidth
+    println(width, columnHeight)
   }
 
-  private var width = chars*columnWidth
+  private var width = getAttribute[Int]("chars")*columnWidth
 
-  setShape( new Rectangle(x, y, width, columnHeight))
+  setShape( new Rectangle(getAttribute("x"), getAttribute("y"), width, columnHeight))
   setFill(true)
   setFillColor(Color.WHITE)
   //offsetTextY(-columnHeight/4)
 
   override def onCharacterTyped(change: Int): Unit = {
-    println(chars, columnWidth, width)
+    println(getAttribute("chars"), columnWidth, width)
   }
 
 
