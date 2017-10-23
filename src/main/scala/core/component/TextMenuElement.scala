@@ -3,7 +3,7 @@ package core.component
 import java.awt.{Color, Font, Point}
 
 class TextMenuElement(x: Int, y: Int, var txt: String="", font: Font = BasicComponent.getDefaultFont)
-  extends TextLabel(x, y, "", font) with MenuElement {
+  extends TextLabel with MenuElement {
   setBorderColor(Color.WHITE)
 
 

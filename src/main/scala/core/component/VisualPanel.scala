@@ -3,6 +3,7 @@ package core.component
 import java.awt.{Dimension, Graphics, Graphics2D}
 import javax.swing.JPanel
 
+import core.component.utils.ComponentBuilder
 import core.layout.utils.{AbsoluteLocator, Locator}
 import core.layout.{AbsoluteLayout, Layer, Layout}
 import core.shape.Shape
@@ -14,7 +15,13 @@ import scala.collection.mutable.ListBuffer
   */
 class VisualPanel(dimension: Dimension, name: String)(implicit window: Window) extends JPanel{
 
-  private var vpLayout: Layout = new AbsoluteLayout(this)
+  implicit def vp: VisualPanel = this
+
+  private var vpLayout: Layout = new AbsoluteLayout
+
+  def build[T <: BasicComponent](comp: T): ComponentBuilder[T] ={
+    new ComponentBuilder[T](comp, this)
+  }
 
   def getVisualPanelLayout: Layout  = vpLayout
   def setVisualPanelLayout(layout:Layout): Unit = this.vpLayout = layout

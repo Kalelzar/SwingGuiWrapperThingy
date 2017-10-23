@@ -1,7 +1,11 @@
 package core.layout
 
-import core.component.VisualPanel
+import core.component.{BasicComponent, VisualPanel}
+import core.layout.utils.{AbsoluteLocator, Locator}
 
-class AbsoluteLayout(visualPanel: VisualPanel) extends Layout{
+class AbsoluteLayout(implicit visualPanel: VisualPanel) extends Layout{
   setAdministeredVisualPanel(visualPanel)
+
+  override def acquireLocator(comp: BasicComponent): Locator = new AbsoluteLocator(comp)
 }
+

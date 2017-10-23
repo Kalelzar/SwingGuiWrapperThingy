@@ -33,6 +33,6 @@ trait Layout {
     getLayerByID(layer).getLayoutPane.addLayerElement(component, location)
   }
 
-
+  def acquireLocator(comp: BasicComponent): Locator
 
 }

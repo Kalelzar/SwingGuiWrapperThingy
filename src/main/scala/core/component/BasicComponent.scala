@@ -2,11 +2,14 @@ package core.component
 
 import java.awt.{Color, Font, Graphics2D, Point}
 
+import core.component.exception.AttributeNotProvidedException
 import core.component.utils.Focus
 import core.event.listener.EventListener
-import core.shape.Shape
+import core.shape.{Rectangle, Shape}
+
 
 import scala.collection.mutable
+
 
 /**
   * Created by kalelzar on 5/5/17.
@@ -25,6 +28,48 @@ trait BasicComponent {
     * The VisualPanel within which ( Its Layout more specifically ), this component exists and is displayed
     */
   private var visualPanel: VisualPanel = _
+
+  private val attributes = mutable.Map[String, Any]()
+  private val attributeFunc = mutable.Map[String, Any => Unit]()
+
+  provide("layer", 0)
+  provide[Shape]("shape", new Rectangle(0,0,0,0))
+  provide("font", BasicComponent.getDefaultFont)
+  provide[Float]("x", 0.0f)
+  provide[Float]("y", 0.0f)
+
+
+
+
+  protected def provide[R](name: String, defaultValue: R, func: R => Unit): Unit ={
+    attributes(name) = defaultValue
+    attributeFunc(name) = func.asInstanceOf[Any => Unit]
+  }
+
+  protected def provide[R](name: String, defaultValue: R): Unit ={
+    attributes(name) = defaultValue
+
+    def dummy(v: Any) : Unit = v
+    attributeFunc(name) = dummy
+  }
+
+  def getAttributes: mutable.Map[String, Any] = attributes
+
+  def setAttribute[R](name: String, value: R): Unit ={
+    if(attributes.contains(name)) {
+      if(value.getClass.getCanonicalName != attributes(name).getClass.getCanonicalName) {
+        throw new IllegalArgumentException(s"$value is a different type from ${attributes(name)}")
+      }
+      attributes(name) = value
+      attributeFunc(name)(value)
+    }
+    else throw AttributeNotProvidedException(s"Attribute $name is not provided by any component")
+  }
+
+  def getAttribute[R](name: String): R ={
+    if(attributes.contains(name)) attributes(name).asInstanceOf[R]
+    else throw AttributeNotProvidedException(s"Attribute $name is not provided by any component")
+  }
 
   /**
     * The unique identifier provided to the component upon its initialization.
@@ -225,7 +270,7 @@ trait BasicComponent {
     */
   def draw(graphics2D: Graphics2D): Unit ={
     //println("BasicComponent draw start")
-    graphics2D.setFont(font)
+    graphics2D.setFont(getAttribute("font"))
     shape.draw(graphics2D)
     graphics2D.setFont(Window.getMainWindow.getComponentFont)
     //println("BasicComponent draw end")

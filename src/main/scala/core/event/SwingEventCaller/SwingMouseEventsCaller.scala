@@ -11,6 +11,7 @@ class SwingMouseEventsCaller extends MouseListener
                              with MouseWheelListener
 {
   override def mouseExited(mouseEvent: MouseEvent): Unit = {
+    if(Focus.getFocused.last < 0) return
     val ed = new EventData
     ed.setSource(BasicComponent.getBasicComponentByID(Focus.getFocused.last))
     ed.setAction("ExitScreen")
@@ -19,6 +20,7 @@ class SwingMouseEventsCaller extends MouseListener
   }
 
   override def mousePressed(mouseEvent: MouseEvent): Unit = {
+    if(Focus.getFocused.last < 0) return
     val ed = new EventData
     ed.setSource(BasicComponent.getBasicComponentByID(Focus.getFocused.last))
     ed.setAction("Pressed")
@@ -27,6 +29,7 @@ class SwingMouseEventsCaller extends MouseListener
   }
 
   override def mouseReleased(mouseEvent: MouseEvent): Unit = {
+    if(Focus.getFocused.last < 0) return
     val ed = new EventData
     ed.setSource(BasicComponent.getBasicComponentByID(Focus.getFocused.last))
     ed.setAction("Released")
@@ -35,6 +38,7 @@ class SwingMouseEventsCaller extends MouseListener
   }
 
   override def mouseEntered(mouseEvent: MouseEvent): Unit = {
+    if(Focus.getFocused.last < 0) return
     val ed = new EventData
     ed.setSource(BasicComponent.getBasicComponentByID(Focus.getFocused.last))
     ed.setAction("EnterScreen")
@@ -43,6 +47,7 @@ class SwingMouseEventsCaller extends MouseListener
   }
 
   override def mouseClicked(mouseEvent: MouseEvent): Unit = {
+    if(Focus.getFocused.last < 0) return
     val ed = new EventData
     ed.setSource(BasicComponent.getBasicComponentByID(Focus.getFocused.last))
     ed.setAction("Clicked")
@@ -51,6 +56,7 @@ class SwingMouseEventsCaller extends MouseListener
   }
 
   override def mouseDragged(mouseEvent: MouseEvent): Unit = {
+    if(Focus.getFocused.last < 0) return
     val ed = new EventData
     ed.setSource(BasicComponent.getBasicComponentByID(Focus.getFocused.last))
     ed.setAction("Dragged")
@@ -59,6 +65,7 @@ class SwingMouseEventsCaller extends MouseListener
   }
 
   override def mouseMoved(mouseEvent: MouseEvent): Unit = {
+    if(Focus.getFocused.last < 0) return
     val ed = new EventData
     ed.setSource(BasicComponent.getBasicComponentByID(Focus.getFocused.last))
     ed.setAction("Moved")
@@ -67,6 +74,7 @@ class SwingMouseEventsCaller extends MouseListener
   }
 
   override def mouseWheelMoved(mouseWheelEvent: MouseWheelEvent): Unit = {
+    if(Focus.getFocused.last < 0) return
     val ed = new EventData
     ed.setSource(BasicComponent.getBasicComponentByID(Focus.getFocused.last))
     ed.setAction("WheelMoved")
