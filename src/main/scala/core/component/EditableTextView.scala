@@ -4,7 +4,7 @@ import java.awt.event.KeyEvent
 import java.awt.{Color, Graphics2D, Point}
 
 import core.event.Event
-import core.event.listener.{KeyEventListener, MouseEventListener, MouseMovementEventListener}
+import core.event.listener.{CompleteMouseEventListener, KeyEventListener, MouseEventListener, MouseMovementEventListener}
 import core.shape.Shape
 
 //TODO: Add Text Selection with the mouse and keyboard
@@ -22,29 +22,60 @@ trait EditableTextView extends TextView {
     def next(inc: Int): Unit = {
       position+=inc
       if(position<0) position=0
-      if(position> ?|[String]("text").length+1) position = ?|[String]("text").length+1
+      if(position> <--[String]("text").length+1) position = <--[String]("text").length+1
     }
     def previous(red: Int): Unit = next(-red)
 
+    def goto(pos: Int): Unit = {
+      position=pos
+      if(position<0) position=0
+      if(position> <--[String]("text").length+1) position = <--[String]("text").length+1
+    }
   }
 
-  class TextMouseSelectListener extends MouseMovementEventListener{
+  class TextMouseSelectListener extends CompleteMouseEventListener{
     private var mp = new Point(-1, -1)
-    private var startInd = -1
-    override def mouseDragged(event: Event): Unit = {
-      val cp = new Point(event.getData.at(1).asInstanceOf[Int], event.getData.at(2).asInstanceOf[Int])
-      if(!isInside(cp) || cp.equals(mp)) return
+    private var pressed = false
 
+
+    override def mousePressed(event: Event): Unit = {
+      if(event.getData.at(0).asInstanceOf[Int] != 1 ) return
+      val cp = new Point(event.getData.at(1).asInstanceOf[Int], event.getData.at(2).asInstanceOf[Int])
+      if(!isInside(cp) || cp.getX == mp.getX) return
+
+      val colW = <--[Int]("columnWidth")
+
+      startInd = Math.min( Math.floor(
+        (
+          cp.getX -
+          ( <--[Float]("x") -
+            ( colW * <--[Int]("chars") ) / 2
+          )
+        ) / colW
+      ).toInt, <--[String]("text").length)
+
+      caret.goto(startInd)
+
+      mp = cp
+      pressed = true
+    }
+
+
+    override def mouseReleased(event: Event): Unit = {
       if(event.getData.at(0).asInstanceOf[Int] != 1) return
 
-      if(mp.getX < 0 && mp.getY < 0){
-        mp = cp
-        startInd = Math.floor((?|[Float]("x") - ?|[Int]("columnWidth") * ?|[String]("text").length) / ?|[Int]("columnWidth")).toInt
-      }else{
-        val dir = mp.getX - cp.getX
-        val charsToSelect = dir / ?|[Int]("columnWidth")
-      }
+      mp = new Point(-1, -1)
+      pressed = false
+    }
 
+    override def mouseDragged(event: Event): Unit = {
+      val cp = new Point(event.getData.at(1).asInstanceOf[Int], event.getData.at(2).asInstanceOf[Int])
+      if(!isInside(cp) || cp.getX == mp.getX) return
+      if(!pressed) return
+      val dir = mp.getX - cp.getX
+      charsToSelect = -Math.ceil(dir / <--[Int]("columnWidth")).toInt
+      if(charsToSelect > 0) charsToSelect+=1
+      else if(charsToSelect < 0) charsToSelect-=1
 
     }
 
@@ -73,7 +104,7 @@ trait EditableTextView extends TextView {
         if(getAscii(event)!=10)
           return
       }
-      if(?|[Boolean]("limitChars") && ?|[Int]("chars") == ?|[String]("text").length) return
+      if(<--[Boolean]("limitChars") && <--[Int]("chars") == <--[String]("text").length) return
       println(getAscii(event))
       insertTextAtCaret(event.getData.at(0).toString)
       onCharacterTyped(1)
@@ -87,7 +118,7 @@ trait EditableTextView extends TextView {
 
   private val keyListener = new TextViewKeyListener
   addListener(keyListener)
-  private val mouseListener = new MouseMovementEventListener
+  private val mouseListener = new TextMouseSelectListener
   addListener(mouseListener)
 
   private val caret = new Caret
@@ -96,14 +127,14 @@ trait EditableTextView extends TextView {
 
   def insertTextAtCaret(txt: String): Unit ={
     val builder = new StringBuilder
-    builder.append(?|[String]("text"))
+    builder.append(<--[String]("text"))
     builder.insert(caret.getPosition, txt)
     caret.next(txt.length)
-    +|("text", builder.toString())
+    -->("text", builder.toString())
   }
 
   def append(txt:String): Unit ={
-    +|("text", ?|[String]("text")+txt)
+    -->("text", <--[String]("text")+txt)
   }
 
   //TODO: TEXT
@@ -115,34 +146,58 @@ trait EditableTextView extends TextView {
   def removeText(startInd: Int, endInd: Int): Unit ={
     var ind = 0
     val string = new StringBuilder
-    ?|[String]("text").toCharArray.foreach(x =>{
+    <--[String]("text").toCharArray.foreach(x =>{
       if(ind < startInd ||  ind>endInd) string.append(x)
       ind+=1
     })
-    +|("text", string.toString())
+    -->("text", string.toString())
   }
   private val blinkTime = 550l
   private var caretVisible = true
   private var previousTime = System.currentTimeMillis()
   private var currentTime = System.currentTimeMillis()
   override def draw(graphics2D: Graphics2D): Unit = {
-    if(!hasFocus && ?|("borderColor") != ?|[Shape]("shape").getFillColor) +|("borderColor", ?|[Shape]("shape").getFillColor)
-    else if(hasFocus && ?|("borderColor") != Color.BLACK)  +|("borderColor", Color.BLACK)
-    super.draw(graphics2D)
+    if(!hasFocus && <--("borderColor") != <--[Shape]("shape").getFillColor) -->("borderColor", <--[Shape]("shape").getFillColor)
+    else if(hasFocus && <--("borderColor") != Color.BLACK)  -->("borderColor", Color.BLACK)
+
+    graphics2D.setFont(getAttribute("font"))
+    <--[Shape]("shape").draw(graphics2D)
+
+
+    if(startInd >= 0){
+      graphics2D.setColor(Color.RED)
+      if(charsToSelect > 0)
+      {
+        println(charsToSelect)
+        graphics2D.fillRect(
+          (startInd - <--[Int]("chars")/ 2) * <--[Int]("columnWidth") + <--[Float]("x").toInt  ,
+          <--[Float]("y").toInt - <--[Int]("columnHeight")/2,
+          <--[Int]("columnWidth")*charsToSelect,
+          <--[Int]("columnHeight")
+        )
+      }
+
+      graphics2D.setColor(Color.BLACK)
+    }
+
+    graphics2D.setColor( <--("textColor") )
+    graphics2D.setFont(getAttribute("font"))
+    graphics2D.drawString(<--[String]("text"),
+      getShapeLocation.x- <--[Shape]("shape").getDimension.width/2,
+      getShapeLocation.y+ <--[Int]("columnHeight")/4)
+    graphics2D.setFont(Window.getMainWindow.getFont)
+
     if(currentTime-previousTime>=blinkTime){
       previousTime = currentTime
       caretVisible = !caretVisible
     }
 
-    if(startInd > 0){
-      graphics2D.drawRect(100, 100, 50, 50)
-    }
-
     if(caretVisible && hasFocus)
-      graphics2D.drawLine(caret.getPosition* ?|[Int]("columnWidth")+(getShapeLocation.x- ?|[Shape]("shape").getDimension.width/2),
-        (getShapeLocation.y- ?|[Int]("columnHeight") /2.3f).toInt,
-        caret.getPosition* ?|[Int]("columnWidth")+(getShapeLocation.x- ?|[Shape]("shape").getDimension.width/2),
-        (getShapeLocation.y+ ?|[Int]("columnHeight")/2.3f).toInt)
+      graphics2D.drawLine(caret.getPosition* <--[Int]("columnWidth")+(getShapeLocation.x- <--[Shape]("shape").getDimension.width/2),
+        (getShapeLocation.y- <--[Int]("columnHeight") /2.3f).toInt,
+        caret.getPosition* <--[Int]("columnWidth")+(getShapeLocation.x- <--[Shape]("shape").getDimension.width/2),
+        (getShapeLocation.y+ <--[Int]("columnHeight")/2.3f).toInt)
     currentTime = System.currentTimeMillis()
+    graphics2D.setFont(BasicComponent.getDefaultFont)
   }
 }

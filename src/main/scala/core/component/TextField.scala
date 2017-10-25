@@ -15,16 +15,16 @@ class TextField extends EditableTextView{
 
   override def refreshFontSize(font: Font): Unit = {
     super.refreshFontSize(font)
-    width = ?|[Int]("chars") * ?|[Int]("columnWidth")
-    +|("shape", new Rectangle( ?|("x"), ?|("y"), width, ?|[Int]("columnHeight")))
-    +|("fill", true)
-    +|("fillColor", Color.WHITE)
+    width = <--[Int]("chars") * <--[Int]("columnWidth")
+    -->("shape", new Rectangle( <--("x"), <--("y"), width, <--[Int]("columnHeight")))
+    -->("fill", true)
+    -->("fillColor", Color.WHITE)
   }
 
 
 
 
-  private var width = ?|[Int]("chars") * ?|[Int]("columnWidth")
+  private var width = <--[Int]("chars") * <--[Int]("columnWidth")
 
 
 

@@ -31,7 +31,7 @@ class Window(dimension: Dimension) extends JFrame with BasicComponent {
 
   def addVisualPanel(vp: VisualPanel): Unit = {
     panels(vp.getName) = vp
-    if(! ?|[mutable.ListBuffer[EventListener]]("listeners").exists(_.isInstanceOf[FocusOnMouseListener])){
+    if(! <--[mutable.ListBuffer[EventListener]]("listeners").exists(_.isInstanceOf[FocusOnMouseListener])){
       addListener(new FocusOnMouseListener)
     }
   }
@@ -79,7 +79,7 @@ class Window(dimension: Dimension) extends JFrame with BasicComponent {
 
   def this(shape: Shape){
     this(shape.getDimension)
-    this.+|("shape", shape)
+    this.-->("shape", shape)
   }
 
   def this(w: Int, h: Int){

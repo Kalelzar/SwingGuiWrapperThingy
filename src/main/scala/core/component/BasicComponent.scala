@@ -80,13 +80,13 @@ trait BasicComponent {
     }
     else throw AttributeNotProvidedException(s"Attribute $name is not provided by any component")
   }
-  def +|[R](name: String, value: R): Unit = setAttribute(name, value)
+  def -->[R](name: String, value: R): Unit = setAttribute(name, value)
 
   def getAttribute[R](name: String): R ={
     if(attributes.contains(name)) attributes(name).asInstanceOf[R]
     else throw AttributeNotProvidedException(s"Attribute $name is not provided by any component")
   }
-  def ?|[R](name: String): R = getAttribute(name)
+  def <--[R](name: String): R = getAttribute(name)
 
 
 
@@ -99,7 +99,7 @@ trait BasicComponent {
     * @param point - the location
     */
   def moveTo(point: Point): Unit = {
-    ?|[Shape]("shape").moveTo(point.x, point.y)
+    <--[Shape]("shape").moveTo(point.x, point.y)
   }
 
   /**
@@ -109,7 +109,7 @@ trait BasicComponent {
     */
   def addListener(el:EventListener): Unit ={
     el.register(this)
-    ?|[mutable.ListBuffer[EventListener]]("listeners")+=el
+    <--[mutable.ListBuffer[EventListener]]("listeners")+=el
   }
 
 
@@ -119,7 +119,7 @@ trait BasicComponent {
     *
     * @param bt the border thickness
     */
-  private def setBorderThickness(bt: Float): Unit = ?|[Shape]("shape").setBorderThickness(bt)
+  private def setBorderThickness(bt: Float): Unit = <--[Shape]("shape").setBorderThickness(bt)
 
   /**
     * Sets the fill color of the shape if fill is enabled to the specified value. The default is Black.
@@ -127,7 +127,7 @@ trait BasicComponent {
     * @param color the fill color
     */
   private def setFillColor(color: Color): Unit = {
-    ?|[Shape]("shape").setFillColor(color)
+    <--[Shape]("shape").setFillColor(color)
   }
 
   /**
@@ -136,7 +136,7 @@ trait BasicComponent {
     * @param color the border color
     */
   private def setBorderColor(color: Color): Unit = {
-    ?|[Shape]("shape").setBorderColor(color)
+    <--[Shape]("shape").setBorderColor(color)
   }
 
   /**
@@ -145,7 +145,7 @@ trait BasicComponent {
     * @param fill should the shape be filled with background color ( true ) or left transparent ( false )
     */
   private def setFill(fill: Boolean): Unit = {
-    ?|[Shape]("shape").setFill(fill)
+    <--[Shape]("shape").setFill(fill)
   }
 
 
@@ -157,7 +157,7 @@ trait BasicComponent {
     * @return the focus
     */
   def hasFocus: Boolean = {
-    Focus.hasFocus( ?|("ID") )
+    Focus.hasFocus( <--("ID") )
   }
 
   /**
@@ -166,7 +166,7 @@ trait BasicComponent {
     * @return the location of the shape
     */
   def getShapeLocation: Point = {
-    ?|[Shape]("shape").getLocation
+    <--[Shape]("shape").getLocation
   }
 
   /**
@@ -176,7 +176,7 @@ trait BasicComponent {
     * @return is it contained
     */
   def isInside(p: Point): Boolean = {
-    ?|[Shape]("shape").polygon.contains(p)
+    <--[Shape]("shape").polygon.contains(p)
   }
 
   override def toString: String = {
@@ -198,7 +198,7 @@ trait BasicComponent {
   def draw(graphics2D: Graphics2D): Unit ={
     //println("BasicComponent draw start")
     graphics2D.setFont(getAttribute("font"))
-    ?|[Shape]("shape").draw(graphics2D)
+    <--[Shape]("shape").draw(graphics2D)
     graphics2D.setFont(BasicComponent.getDefaultFont)
     //println("BasicComponent draw end")
   }

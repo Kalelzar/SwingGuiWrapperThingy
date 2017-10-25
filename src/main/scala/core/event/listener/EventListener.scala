@@ -3,7 +3,7 @@ package core.event.listener
 import core.component.BasicComponent
 import core.event.{Event, EventQueue}
 
-abstract class EventListener(eventType: String) {
+abstract class EventListener(eventType: String*) {
 
 
 
@@ -20,6 +20,6 @@ abstract class EventListener(eventType: String) {
   def hasFocus: Boolean = {
     parent.hasFocus
   }
-  def getType: String = eventType
+  def getType: Seq[String] = eventType
 
 }

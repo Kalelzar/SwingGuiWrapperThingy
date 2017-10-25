@@ -27,6 +27,7 @@ object Test2 extends App{
     .withAttribute("x", 200f)
     .withAttribute("y",300f)
     .withAttribute("layer", 0)
+    .withAttribute("text", "++++HI++++")
     .forLayout(al)
     .withAttribute("limitChars", true)
     .withAttribute("chars", 10)

@@ -22,16 +22,17 @@ object EventQueue {
 
   def registerListener(listener: EventListener): Unit ={
 
-    if(listeners.isDefinedAt(listener.getType)){
-      listeners(listener.getType)+=listener
-    }else{
-      listeners(listener.getType) = ListBuffer[EventListener](listener)
+    listener.getType.foreach{ l =>
+      if(listeners.isDefinedAt(l)){
+        listeners(l)+=listener
+      }else{
+        listeners(l) = ListBuffer[EventListener](listener)
+      }
     }
 
   }
 
   def consumeNextEvent(): Unit = {
-
     if (eventQueue.length <1) return
     val event = eventQueue.dequeue()
     if( event == null) return
