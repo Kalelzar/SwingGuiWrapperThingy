@@ -74,8 +74,8 @@ trait EditableTextView extends TextView {
       if(!pressed) return
       val dir = mp.getX - cp.getX
       charsToSelect = -Math.ceil(dir / <--[Int]("columnWidth")).toInt
-      if(charsToSelect > 0) charsToSelect+=1
-      else if(charsToSelect < 0) charsToSelect-=1
+      if(dir < 0) charsToSelect+=1
+      else if(dir > 0) charsToSelect-=1
 
     }
 
