@@ -1,15 +1,20 @@
 package core.component
 
 import java.awt.event.KeyEvent
-import java.awt.{Color, Graphics2D}
+import java.awt.{Color, Graphics2D, Point}
 
 import core.event.Event
-import core.event.listener.KeyEventListener
+import core.event.listener.{KeyEventListener, MouseEventListener, MouseMovementEventListener}
 import core.shape.Shape
 
 //TODO: Add Text Selection with the mouse and keyboard
 trait EditableTextView extends TextView {
 
+  provide[Int]("chars", 10)
+  provide[Boolean]("limitChars", false)
+
+  private var startInd = -1
+  private var charsToSelect = 0
 
   private class Caret{
     private var position = 0
@@ -23,7 +28,29 @@ trait EditableTextView extends TextView {
 
   }
 
-   class TextViewKeyListener extends KeyEventListener{
+  class TextMouseSelectListener extends MouseMovementEventListener{
+    private var mp = new Point(-1, -1)
+    private var startInd = -1
+    override def mouseDragged(event: Event): Unit = {
+      val cp = new Point(event.getData.at(1).asInstanceOf[Int], event.getData.at(2).asInstanceOf[Int])
+      if(!isInside(cp) || cp.equals(mp)) return
+
+      if(event.getData.at(0).asInstanceOf[Int] != 1) return
+
+      if(mp.getX < 0 && mp.getY < 0){
+        mp = cp
+        startInd = Math.floor((?|[Float]("x") - ?|[Int]("columnWidth") * ?|[String]("text").length) / ?|[Int]("columnWidth")).toInt
+      }else{
+        val dir = mp.getX - cp.getX
+        val charsToSelect = dir / ?|[Int]("columnWidth")
+      }
+
+
+    }
+
+  }
+
+  class TextViewKeyListener extends KeyEventListener{
     override def keyPressed(event: Event): Unit = {
       if(event.getData.at(1) == KeyEvent.VK_LEFT){
         caret.previous(1)
@@ -46,6 +73,7 @@ trait EditableTextView extends TextView {
         if(getAscii(event)!=10)
           return
       }
+      if(?|[Boolean]("limitChars") && ?|[Int]("chars") == ?|[String]("text").length) return
       println(getAscii(event))
       insertTextAtCaret(event.getData.at(0).toString)
       onCharacterTyped(1)
@@ -57,8 +85,10 @@ trait EditableTextView extends TextView {
 
   }
 
-  private val listener = new TextViewKeyListener
-  addListener(listener)
+  private val keyListener = new TextViewKeyListener
+  addListener(keyListener)
+  private val mouseListener = new MouseMovementEventListener
+  addListener(mouseListener)
 
   private val caret = new Caret
 
@@ -103,6 +133,11 @@ trait EditableTextView extends TextView {
       previousTime = currentTime
       caretVisible = !caretVisible
     }
+
+    if(startInd > 0){
+      graphics2D.drawRect(100, 100, 50, 50)
+    }
+
     if(caretVisible && hasFocus)
       graphics2D.drawLine(caret.getPosition* ?|[Int]("columnWidth")+(getShapeLocation.x- ?|[Shape]("shape").getDimension.width/2),
         (getShapeLocation.y- ?|[Int]("columnHeight") /2.3f).toInt,

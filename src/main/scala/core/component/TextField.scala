@@ -7,9 +7,9 @@ import core.shape.Rectangle
 
 class TextField extends EditableTextView{
 
-  provide("chars", 10)
-  provide("text", "", onSetText)
-  provide("font", BasicComponent.getDefaultFont, refreshFontSize)
+  provide[String]("text", "", onSetText(_))
+  provide[Font]("font", BasicComponent.getDefaultFont, refreshFontSize(_))
+
 
   refreshFontSize(BasicComponent.getDefaultFont)
 
@@ -21,12 +21,12 @@ class TextField extends EditableTextView{
     +|("fillColor", Color.WHITE)
   }
 
+
+
+
   private var width = ?|[Int]("chars") * ?|[Int]("columnWidth")
 
 
-  override def onCharacterTyped(change: Int): Unit = {
-    println(?|("chars"), ?|[Int]("columnWidth"), width)
-  }
 
 
 }

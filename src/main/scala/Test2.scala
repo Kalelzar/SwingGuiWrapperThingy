@@ -24,10 +24,11 @@ object Test2 extends App{
     .acquireReference
 
   val tf = vp.build(new TextField)
-    .withAttribute("x",200f)
+    .withAttribute("x", 200f)
     .withAttribute("y",300f)
     .withAttribute("layer", 0)
     .forLayout(al)
+    .withAttribute("limitChars", true)
     .withAttribute("chars", 10)
     .withAttribute("font", font)
     .acquireReference
