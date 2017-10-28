@@ -7,7 +7,7 @@ import core.event.Event
 import core.event.listener.{CompleteMouseEventListener, KeyEventListener, MouseEventListener, MouseMovementEventListener}
 import core.shape.Shape
 
-//TODO: Add Text Selection with the mouse and keyboard
+
 trait EditableTextView extends TextView {
 
   provide[Int]("chars", 10)
@@ -37,6 +37,17 @@ trait EditableTextView extends TextView {
     private var mp = new Point(-1, -1)
     private var pressed = false
 
+    private var clickTime = 0l
+
+    override def mouseClicked(event: Event): Unit = {
+      val curTime = System.currentTimeMillis()
+      println(curTime)
+      if(curTime-clickTime <= 300l){
+        startInd = 0
+        charsToSelect = <--[String]("text").length
+      }
+      clickTime = curTime
+    }
 
     override def mousePressed(event: Event): Unit = {
       if(event.getData.at(0).asInstanceOf[Int] != 1 ) return
@@ -53,7 +64,7 @@ trait EditableTextView extends TextView {
           )
         ) / colW
       ).toInt, <--[String]("text").length)
-
+      charsToSelect = 0
       caret.goto(startInd)
 
       mp = cp
@@ -75,7 +86,6 @@ trait EditableTextView extends TextView {
       val dir = mp.getX - cp.getX
       charsToSelect = -Math.ceil(dir / <--[Int]("columnWidth")).toInt
       if(dir < 0) charsToSelect+=1
-      else if(dir > 0) charsToSelect-=1
 
     }
 
@@ -95,11 +105,14 @@ trait EditableTextView extends TextView {
         if(getAscii(event) == 127){
           onCharacterTyped(-1)
           removeText(caret.getPosition)
+          if(caret.getPosition > <--[String]("text").length) caret.goto( <--[String]("text").length)
         }
         else if(getAscii(event) == 8){
+          val back = charsToSelect==0
           removeText(caret.getPosition-1)
+          if(back) caret.previous(1)
           onCharacterTyped(-1)
-          caret.previous(1)
+          if(caret.getPosition > <--[String]("text").length) caret.goto( <--[String]("text").length)
         }
         if(getAscii(event)!=10)
           return
@@ -144,6 +157,15 @@ trait EditableTextView extends TextView {
   }
 
   def removeText(startInd: Int, endInd: Int): Unit ={
+    if(charsToSelect!=0){
+      val sioffset = if(charsToSelect<0) -1 else 0
+      val ctsoffset = if(charsToSelect<0) 0 else -1
+      val start = Math.min(this.startInd + sioffset, this.startInd+charsToSelect + ctsoffset)
+      val end = Math.max(this.startInd + sioffset, this.startInd+charsToSelect + ctsoffset)
+      charsToSelect = 0
+      removeText(start, end)
+      return
+    }
     var ind = 0
     val string = new StringBuilder
     <--[String]("text").toCharArray.foreach(x =>{
@@ -151,6 +173,7 @@ trait EditableTextView extends TextView {
       ind+=1
     })
     -->("text", string.toString())
+
   }
   private val blinkTime = 550l
   private var caretVisible = true
@@ -165,10 +188,12 @@ trait EditableTextView extends TextView {
 
 
     if(startInd >= 0){
-      graphics2D.setColor(Color.RED)
-      if(charsToSelect > 0)
+      graphics2D.setColor(Color.decode("#6b79d6"))
+      if(charsToSelect != 0)
       {
         println(charsToSelect)
+        if(charsToSelect>0) charsToSelect = Math.min(charsToSelect, <--[String]("text").length-startInd)
+        if(charsToSelect<0) charsToSelect = Math.max(-startInd, charsToSelect)
         graphics2D.fillRect(
           (startInd - <--[Int]("chars")/ 2) * <--[Int]("columnWidth") + <--[Float]("x").toInt  ,
           <--[Float]("y").toInt - <--[Int]("columnHeight")/2,

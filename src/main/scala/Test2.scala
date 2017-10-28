@@ -15,7 +15,7 @@ object Test2 extends App{
   val font = new Font(Font.MONOSPACED, Font.PLAIN, 24)
   val al = new AbsoluteLayout
   val tl = vp.build(new TextLabel)
-    .withAttribute("x", 200f)
+    .withAttribute("x", 400f)
     .withAttribute("y", 200f)
     .withAttribute("layer", 3)
     .forLayout(al)
@@ -24,13 +24,12 @@ object Test2 extends App{
     .acquireReference
 
   val tf = vp.build(new TextField)
-    .withAttribute("x", 200f)
+    .withAttribute("x", 400f)
     .withAttribute("y",300f)
     .withAttribute("layer", 0)
-    .withAttribute("text", "++++HI++++")
     .forLayout(al)
     .withAttribute("limitChars", true)
-    .withAttribute("chars", 10)
+    .withAttribute("chars", 40)
     .withAttribute("font", font)
     .acquireReference
 
