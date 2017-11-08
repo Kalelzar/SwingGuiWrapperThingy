@@ -25,7 +25,7 @@ object Test2 extends App{
 
   val tf = vp.build(new TextField)
     .withAttribute("x", 400f)
-    .withAttribute("y",300f)
+    .withAttribute("y", 300f)
     .withAttribute("layer", 0)
     .forLayout(al)
     .withAttribute("limitChars", true)
@@ -33,8 +33,8 @@ object Test2 extends App{
     .withAttribute("font", font)
     .acquireReference
 
-  println(tl.getAttributes)
-  println(tf.getAttributes)
+  //println(tl.getAttributes)
+  //println(tf.getAttributes)
 
   w.addVisualPanel(vp)
   w.display("Square")

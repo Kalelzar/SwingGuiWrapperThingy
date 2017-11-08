@@ -109,8 +109,10 @@ trait EditableTextView extends TextView {
         }
         else if(getAscii(event) == 8){
           val back = charsToSelect==0
+          val backMore = charsToSelect<0
           removeText(caret.getPosition-1)
           if(back) caret.previous(1)
+          if(backMore) caret.next(charsToSelect)
           onCharacterTyped(-1)
           if(caret.getPosition > <--[String]("text").length) caret.goto( <--[String]("text").length)
         }
@@ -180,8 +182,8 @@ trait EditableTextView extends TextView {
   private var previousTime = System.currentTimeMillis()
   private var currentTime = System.currentTimeMillis()
   override def draw(graphics2D: Graphics2D): Unit = {
-    if(!hasFocus && <--("borderColor") != <--[Shape]("shape").getFillColor) -->("borderColor", <--[Shape]("shape").getFillColor)
-    else if(hasFocus && <--("borderColor") != Color.BLACK)  -->("borderColor", Color.BLACK)
+    if(!hasFocus && <--[Color]("borderColor") != <--[Shape]("shape").getFillColor) -->("borderColor", <--[Shape]("shape").getFillColor)
+    else if(hasFocus && <--[Color]("borderColor") != Color.BLACK)  -->("borderColor", Color.BLACK)
 
     graphics2D.setFont(getAttribute("font"))
     <--[Shape]("shape").draw(graphics2D)
@@ -191,13 +193,18 @@ trait EditableTextView extends TextView {
       graphics2D.setColor(Color.decode("#6b79d6"))
       if(charsToSelect != 0)
       {
-        println(charsToSelect)
         if(charsToSelect>0) charsToSelect = Math.min(charsToSelect, <--[String]("text").length-startInd)
-        if(charsToSelect<0) charsToSelect = Math.max(-startInd, charsToSelect)
+        if(charsToSelect<0) charsToSelect = Math.max(charsToSelect, -startInd)
+        println(charsToSelect)
+
+        val startRectX = (startInd - <--[Int]("chars")/ 2) * <--[Int]("columnWidth") + <--[Float]("x").toInt
+
+        val rectX = if(charsToSelect>0) startRectX else startRectX + <--[Int]("columnWidth")*charsToSelect
+
         graphics2D.fillRect(
-          (startInd - <--[Int]("chars")/ 2) * <--[Int]("columnWidth") + <--[Float]("x").toInt  ,
+          rectX ,
           <--[Float]("y").toInt - <--[Int]("columnHeight")/2,
-          <--[Int]("columnWidth")*charsToSelect,
+          <--[Int]("columnWidth")*Math.abs(charsToSelect),
           <--[Int]("columnHeight")
         )
       }
