@@ -110,9 +110,13 @@ trait EditableTextView extends TextView {
         else if(getAscii(event) == 8){
           val back = charsToSelect==0
           val backMore = charsToSelect<0
+          val moves = charsToSelect
           removeText(caret.getPosition-1)
           if(back) caret.previous(1)
-          if(backMore) caret.next(charsToSelect)
+          if(backMore) {
+            println(moves)
+            caret.next(moves)
+          }
           onCharacterTyped(-1)
           if(caret.getPosition > <--[String]("text").length) caret.goto( <--[String]("text").length)
         }
