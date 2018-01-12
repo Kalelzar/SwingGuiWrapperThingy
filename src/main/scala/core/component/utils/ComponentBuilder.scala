@@ -3,6 +3,8 @@ package core.component.utils
 import core.component.{BasicComponent, VisualPanel}
 import core.layout.Layout
 
+import scala.reflect.ClassTag
+
 class ComponentBuilder[T <: BasicComponent](component: T, vp : VisualPanel) {
 
 
@@ -12,7 +14,7 @@ class ComponentBuilder[T <: BasicComponent](component: T, vp : VisualPanel) {
     this
   }
 
-  def withAttribute[R](name: String, value: R): ComponentBuilder[T] ={
+  def withAttribute[R: ClassTag](name: String, value: R): ComponentBuilder[T] = {
     component.-->(name, value)
     this
   }

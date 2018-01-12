@@ -1,14 +1,15 @@
 package core.component
 
 import java.awt.{Color, Font, Graphics2D, Point}
+import java.util
 
 import core.component.exception.AttributeNotProvidedException
 import core.component.utils.Focus
 import core.event.listener.EventListener
 import core.shape.{Rectangle, Shape}
 
-
 import scala.collection.mutable
+import scala.reflect.ClassTag
 
 
 /**
@@ -24,6 +25,7 @@ import scala.collection.mutable
   */
 trait BasicComponent {
 
+
   private val attributes = mutable.Map[String, Any]()
   private val attributeFunc = mutable.Map[String, Any => Unit]()
 
@@ -37,7 +39,7 @@ trait BasicComponent {
     */
   provide[Int]("ID", BasicComponent.getID(this))
 
-  provide[Shape]("shape", new Rectangle(0,0,0,0))
+  provide[Shape]("shape", new Rectangle(0, 0, 0, 0).asInstanceOf[Shape])
 
   provide[Font]("font", BasicComponent.getDefaultFont)
 
@@ -70,9 +72,16 @@ trait BasicComponent {
   def getAttributes: mutable.Map[String, Any] = attributes
 
 
-  def setAttribute[R](name: String, value: R): Unit ={
+  def setAttribute[R: ClassTag](name: String, value: R): Unit = {
     if(attributes.contains(name)) {
-      if(!attributes(name).getClass.isInstance(value)) {
+      val classList = new util.ArrayList[Class[_]]
+      classList.add(attributes(name).getClass)
+      classList.add(value.getClass)
+      val result = List(attributes(name)).flatMap {
+        case x: R => Some(x)
+        case _ => None
+      }.nonEmpty
+      if (!result) {
         throw new IllegalArgumentException(s"$value is a different type from ${attributes(name)}")
       }
       attributes(name) = value
@@ -80,13 +89,15 @@ trait BasicComponent {
     }
     else throw AttributeNotProvidedException(s"Attribute $name is not provided by any component")
   }
-  def -->[R](name: String, value: R): Unit = setAttribute(name, value)
+
+  def -->[R: ClassTag](name: String, value: R): Unit = setAttribute[R](name, value)
 
   def getAttribute[R](name: String): R ={
     if(attributes.contains(name)) attributes(name).asInstanceOf[R]
     else throw AttributeNotProvidedException(s"Attribute $name is not provided by any component")
   }
-  def <--[R](name: String): R = getAttribute(name)
+
+  def <--[R](name: String): R = getAttribute[R](name)
 
 
 

@@ -3,14 +3,13 @@ package core.shape
 import java.awt.Dimension
 
 import scala.collection.mutable.ListBuffer
-import scala.math.Numeric.FloatAsIfIntegral
 
 class Polygram(startX: Float, startY: Float, sides: Int, sideLength: Int, rotation: Double = 0 ) extends Shape {
 
 
+  override def centerOnX: Float = 0
 
-  override def centerOnX: Float = ???
-  override def centerOnY: Float = ???
+  override def centerOnY: Float = 0
 
   private val angle: Double = Math.floor((1-(2/sides.toFloat))*180 + 0.0001)
 

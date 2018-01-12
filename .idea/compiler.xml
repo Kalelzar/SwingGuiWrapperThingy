@@ -10,8 +10,8 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="swingguiwrapperthingy" target="1.5" />
-      <module name="swingwrapper" target="1.5" />
+      <module name="swingguiwrapperthingy" target="1.8" />
+      <module name="swingwrapper" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
