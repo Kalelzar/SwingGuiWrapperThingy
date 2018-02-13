@@ -6,7 +6,7 @@ import javax.swing.{JFrame, SwingUtilities}
 
 import core.event.listener.{EventListener, FocusOnMouseListener}
 import core.event.{EventQueue, EventType}
-import core.shape.Shape
+import core.shape.deprecated.Shape
 
 import scala.collection.mutable
 import scala.collection.mutable.Map

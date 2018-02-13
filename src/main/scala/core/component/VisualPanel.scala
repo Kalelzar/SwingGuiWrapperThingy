@@ -6,7 +6,7 @@ import javax.swing.JPanel
 import core.component.utils.ComponentBuilder
 import core.layout.utils.{AbsoluteLocator, Locator}
 import core.layout.{AbsoluteLayout, Layer, Layout}
-import core.shape.Shape
+import core.shape.deprecated.Shape
 
 import scala.collection.mutable.ListBuffer
 

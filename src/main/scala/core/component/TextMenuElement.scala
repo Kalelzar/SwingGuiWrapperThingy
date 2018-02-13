@@ -2,9 +2,9 @@ package core.component
 
 import java.awt.{Color, Font, Point}
 
-import core.shape.Shape
+import core.shape.deprecated.Shape
 
-class TextMenuElement(x: Int, y: Int, var txt: String="", font: Font = BasicComponent.getDefaultFont)
+class TextMenuElement(x: Float, y: Float, var txt: String="", font: Font = BasicComponent.getDefaultFont)
   extends TextLabel with MenuElement {
   -->("borderColor", Color.WHITE)
 
@@ -20,7 +20,8 @@ class TextMenuElement(x: Int, y: Int, var txt: String="", font: Font = BasicComp
     println(index)
     val mx = menu.getShapeLocation.x
     val my = menu.getShapeLocation.y - menu.<--[Shape]("shape").getDimension.height/2 + <--[Int]("columnHeight")/2 + <--[Int]("columnHeight")*index
-    moveTo(new Point(mx, my))
+
+    //FIXME: moveTo(new Point(mx, my))
     println(getShapeLocation)
     show()
   }

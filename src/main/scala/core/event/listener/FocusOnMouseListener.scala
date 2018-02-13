@@ -1,5 +1,5 @@
 package core.event.listener
-import java.awt.Point
+import core.shape.helper.Point
 
 import core.component.{BasicComponent, Window}
 import core.component.utils.Focus

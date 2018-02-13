@@ -5,7 +5,7 @@ import core.component.BasicComponent
 class AbsoluteLocator(basicComponent: BasicComponent) extends Locator{
   override def getComponent: BasicComponent = basicComponent
 
-  override def getX: Int = basicComponent.getShapeLocation.x
-  override def getY: Int = basicComponent.getShapeLocation.y
+  override def getX: Float = basicComponent.getShapeLocation.x
+  override def getY: Float = basicComponent.getShapeLocation.y
 
 }

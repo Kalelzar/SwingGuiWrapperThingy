@@ -1,9 +1,10 @@
-package core.shape
+package core.shape.deprecated
 
 import java.awt.geom.GeneralPath
 import java.awt.{BasicStroke, Color, Dimension, Graphics2D, Point, RenderingHints}
 
 import core.animation.Animation
+import core.shape.Vertex
 /**
   * Created by kalelzar on 5/5/17.
   *

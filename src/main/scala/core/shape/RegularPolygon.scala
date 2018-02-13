@@ -1,7 +1,8 @@
 package core.shape
 import java.awt.Dimension
 
-import core.shape.Helper.AngleHelper
+import core.shape.deprecated.Shape
+import core.shape.helper.AngleHelper
 
 
 class RegularPolygon(startX: Float, startY: Float, sides: Int, sideLength: Int, rotation: Double = 0 ) extends Shape {

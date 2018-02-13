@@ -1,6 +1,6 @@
 package core.animation
 
-import core.shape.Shape
+import core.shape.deprecated.Shape
 
 class Slide(direction: Direction, dist: Float, var frames: Int) extends Animation {
   onCreate(s"Slide $direction $dist $frames")

@@ -1,15 +1,15 @@
 package core.component
 
-import java.awt.{Color, Font, Graphics2D, Point}
-import java.util
+import java.awt.{Color, Font, Graphics2D}
 
-import core.component.exception.AttributeNotProvidedException
 import core.component.utils.Focus
 import core.event.listener.EventListener
-import core.shape.{Rectangle, Shape}
+import core.shape.{AbstractShape, Point2D, Rectangle}
+import core.shape.deprecated.Shape
+import core.shape.helper.Point
+import core.util.AttributeRegister
 
 import scala.collection.mutable
-import scala.reflect.ClassTag
 
 
 /**
@@ -23,11 +23,7 @@ import scala.reflect.ClassTag
   * Extended mainly by other traits that give more functionality
   * at the expense of generalization
   */
-trait BasicComponent {
-
-
-  private val attributes = mutable.Map[String, Any]()
-  private val attributeFunc = mutable.Map[String, Any => Unit]()
+trait BasicComponent extends AttributeRegister{
 
   provide[Int]("layer", 0)
 
@@ -39,7 +35,7 @@ trait BasicComponent {
     */
   provide[Int]("ID", BasicComponent.getID(this))
 
-  provide[Shape]("shape", new Rectangle(0, 0, 0, 0).asInstanceOf[Shape])
+  provide[AbstractShape]("shape", new Point2D(0, 0))
 
   provide[Font]("font", BasicComponent.getDefaultFont)
 
@@ -56,51 +52,6 @@ trait BasicComponent {
 
   provide[VisualPanel]("visualPanel", Window.getDummyVisualPanel)
 
-  protected def provide[R](name: String, defaultValue: R, func: R => Unit): Unit ={
-    attributes(name) = defaultValue
-    attributeFunc(name) = func.asInstanceOf[Any => Unit]
-    func(defaultValue)
-  }
-
-  protected def provide[R](name: String, defaultValue: R): Unit ={
-    attributes(name) = defaultValue
-
-    def dummy(v: Any) : Unit = v
-    attributeFunc(name) = dummy
-  }
-
-  def getAttributes: mutable.Map[String, Any] = attributes
-
-
-  def setAttribute[R: ClassTag](name: String, value: R): Unit = {
-    if(attributes.contains(name)) {
-      val classList = new util.ArrayList[Class[_]]
-      classList.add(attributes(name).getClass)
-      classList.add(value.getClass)
-      val result = List(attributes(name)).flatMap {
-        case x: R => Some(x)
-        case _ => None
-      }.nonEmpty
-      if (!result) {
-        throw new IllegalArgumentException(s"$value is a different type from ${attributes(name)}")
-      }
-      attributes(name) = value
-      attributeFunc(name)(value)
-    }
-    else throw AttributeNotProvidedException(s"Attribute $name is not provided by any component")
-  }
-
-  def -->[R: ClassTag](name: String, value: R): Unit = setAttribute[R](name, value)
-
-  def getAttribute[R](name: String): R ={
-    if(attributes.contains(name)) attributes(name).asInstanceOf[R]
-    else throw AttributeNotProvidedException(s"Attribute $name is not provided by any component")
-  }
-
-  def <--[R](name: String): R = getAttribute[R](name)
-
-
-
 
   /* Setters */
 
@@ -110,7 +61,7 @@ trait BasicComponent {
     * @param point - the location
     */
   def moveTo(point: Point): Unit = {
-    <--[Shape]("shape").moveTo(point.x, point.y)
+    //FIXME: <--[Shape]("shape").moveTo(point.x, point.y)
   }
 
   /**
@@ -130,7 +81,7 @@ trait BasicComponent {
     *
     * @param bt the border thickness
     */
-  private def setBorderThickness(bt: Float): Unit = <--[Shape]("shape").setBorderThickness(bt)
+  private def setBorderThickness(bt: Float): Unit = <--[AbstractShape]("shape").-->("borderThickness",bt)
 
   /**
     * Sets the fill color of the shape if fill is enabled to the specified value. The default is Black.
@@ -138,7 +89,7 @@ trait BasicComponent {
     * @param color the fill color
     */
   private def setFillColor(color: Color): Unit = {
-    <--[Shape]("shape").setFillColor(color)
+    <--[AbstractShape]("shape").-->("fillColor", color)
   }
 
   /**
@@ -147,7 +98,7 @@ trait BasicComponent {
     * @param color the border color
     */
   private def setBorderColor(color: Color): Unit = {
-    <--[Shape]("shape").setBorderColor(color)
+    <--[AbstractShape]("shape").-->("borderColor", color)
   }
 
   /**
@@ -156,7 +107,7 @@ trait BasicComponent {
     * @param fill should the shape be filled with background color ( true ) or left transparent ( false )
     */
   private def setFill(fill: Boolean): Unit = {
-    <--[Shape]("shape").setFill(fill)
+    <--[AbstractShape]("shape").-->("fill",fill)
   }
 
 
@@ -177,7 +128,7 @@ trait BasicComponent {
     * @return the location of the shape
     */
   def getShapeLocation: Point = {
-    <--[Shape]("shape").getLocation
+    <--[AbstractShape]("shape").getCenter
   }
 
   /**
@@ -187,7 +138,7 @@ trait BasicComponent {
     * @return is it contained
     */
   def isInside(p: Point): Boolean = {
-    <--[Shape]("shape").polygon.contains(p)
+    <--[AbstractShape]("shape").getBounds.contains(new java.awt.Point(p.x.toInt, p.y.toInt))
   }
 
   override def toString: String = {
@@ -209,7 +160,7 @@ trait BasicComponent {
   def draw(graphics2D: Graphics2D): Unit ={
     //println("BasicComponent draw start")
     graphics2D.setFont(getAttribute("font"))
-    <--[Shape]("shape").draw(graphics2D)
+    <--[AbstractShape]("shape").draw(graphics2D)
     graphics2D.setFont(BasicComponent.getDefaultFont)
     //println("BasicComponent draw end")
   }

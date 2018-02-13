@@ -1,47 +1,43 @@
 package core.shape
 
-import java.awt.Dimension
-
 import scala.collection.mutable.ListBuffer
 
-class Polygram(startX: Float, startY: Float, sides: Int, sideLength: Int, rotation: Double = 0 ) extends Shape {
+class Polygram() extends BasicShape {
 
+  def build(): Unit ={
+    val sides = <--[Int](sides)
+    val angle: Double = Math.floor((1-(2/sides.toFloat))*180 + 0.0001)
 
-  override def centerOnX: Float = 0
+    val offset: Double = angle/2
 
-  override def centerOnY: Float = 0
+    var vertices = ListBuffer[(Float, Float)]()
 
-  private val angle: Double = Math.floor((1-(2/sides.toFloat))*180 + 0.0001)
+    val jump = Math.ceil(sides.toDouble/2.0-1).toInt
 
-  private val offset: Double = angle/2
+    (0 until sides).foreach(n=>{
 
-  private var vertices = ListBuffer[(Float, Float)]()
+      val x = sideLength * Math.cos(2*Math.PI*n/sides + Math.toRadians(rotation) + Math.toRadians(offset)) + (sideLength+startX)
+      val y = sideLength * Math.sin(2*Math.PI*n/sides + Math.toRadians(rotation) + Math.toRadians(offset)) + (sideLength+startY)
 
-  private val jump = Math.ceil(sides.toDouble/2.0-1).toInt
+      vertices += ((x.toFloat, y.toFloat))
 
-  (0 until sides).foreach(n=>{
+    })
 
-    val x = sideLength * Math.cos(2*Math.PI*n/sides + Math.toRadians(rotation) + Math.toRadians(offset)) + (sideLength+startX)
-    val y = sideLength * Math.sin(2*Math.PI*n/sides + Math.toRadians(rotation) + Math.toRadians(offset)) + (sideLength+startY)
+    var added = 1
+    var ind = jump
+    beginAt(vertices.head._1, vertices.head._2)
 
-    vertices += ((x.toFloat, y.toFloat))
+    while(added<sides){
 
-  })
+      lineTo(vertices(ind)._1, vertices(ind)._2)
 
-  private var added = 0
-  private var ind = 0
+      ind+= jump
+      if(ind>=sides) ind -= sides
+      added+=1
+    }
 
-  while(added<sides){
-
-    addVertex(vertices(ind)._1, vertices(ind)._2)
-
-    ind+= jump
-    if(ind>=sides) ind -= sides
-    added+=1
+    close
   }
 
-  pack()
-
-  override def getDimension: Dimension = new Dimension(sideLength, sideLength)
 }
 

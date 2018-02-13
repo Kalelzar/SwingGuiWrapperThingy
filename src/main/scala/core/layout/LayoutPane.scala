@@ -1,9 +1,10 @@
 package core.layout
 
-import java.awt.{Graphics2D, Point}
+import java.awt.Graphics2D
 
 import core.component.{BasicComponent, VisualPanel}
 import core.layout.utils.Locator
+import core.shape.helper.Point
 
 import scala.collection.mutable
 

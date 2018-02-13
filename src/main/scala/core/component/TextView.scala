@@ -2,7 +2,7 @@ package core.component
 
 import java.awt.{Color, Font, FontMetrics, Graphics2D}
 
-import core.shape.Shape
+import core.shape.deprecated.Shape
 import sun.swing.SwingUtilities2
 
 trait TextView extends BasicComponent{

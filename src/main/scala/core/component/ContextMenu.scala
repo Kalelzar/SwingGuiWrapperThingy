@@ -1,12 +1,14 @@
 package core.component
 
 import java.awt.event.MouseEvent
-import java.awt.{Color, Point}
+import java.awt.Color
 
 import core.component.utils.Focus
 import core.event.Event
 import core.event.listener.MouseEventListener
-import core.shape.{Rectangle, Shape}
+import core.shape.Rectangle
+import core.shape.deprecated.Shape
+import core.shape.helper.Point
 
 class ContextMenu(var width: Float, var height: Float, parent: BasicComponent) extends Menu {
 

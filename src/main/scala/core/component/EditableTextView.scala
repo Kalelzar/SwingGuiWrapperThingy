@@ -1,12 +1,12 @@
 package core.component
 
 import java.awt.event.KeyEvent
-import java.awt.{Color, Graphics2D, Point}
+import java.awt.{Color, Graphics2D}
 
 import core.event.Event
 import core.event.listener.{CompleteMouseEventListener, KeyEventListener, MouseEventListener, MouseMovementEventListener}
-import core.shape.Shape
-
+import core.shape.deprecated.Shape
+import core.shape.helper.Point
 
 trait EditableTextView extends TextView {
 
@@ -229,9 +229,9 @@ trait EditableTextView extends TextView {
     }
 
     if(caretVisible && hasFocus)
-      graphics2D.drawLine(caret.getPosition* <--[Int]("columnWidth")+(getShapeLocation.x- <--[Shape]("shape").getDimension.width/2),
+      graphics2D.drawLine(caret.getPosition* <--[Int]("columnWidth")+(getShapeLocation.x.toInt- <--[Shape]("shape").getDimension.width/2),
         (getShapeLocation.y- <--[Int]("columnHeight") /2.3f).toInt,
-        caret.getPosition* <--[Int]("columnWidth")+(getShapeLocation.x- <--[Shape]("shape").getDimension.width/2),
+        caret.getPosition* <--[Int]("columnWidth")+(getShapeLocation.x.toInt- <--[Shape]("shape").getDimension.width/2),
         (getShapeLocation.y+ <--[Int]("columnHeight")/2.3f).toInt)
     currentTime = System.currentTimeMillis()
     graphics2D.setFont(BasicComponent.getDefaultFont)

@@ -1,6 +1,6 @@
 package core.animation
 
-import core.shape.Shape
+import core.shape.deprecated.Shape
 
 import scala.collection.mutable
 

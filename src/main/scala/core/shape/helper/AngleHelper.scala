@@ -1,4 +1,4 @@
-package core.shape.Helper
+package core.shape.helper
 
 object AngleHelper {
 

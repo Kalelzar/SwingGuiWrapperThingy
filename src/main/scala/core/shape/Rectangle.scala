@@ -2,6 +2,8 @@ package core.shape
 
 import java.awt.Dimension
 
+import core.shape.deprecated.Shape
+
 class Rectangle(var centerX: Float, var centerY: Float, var width: Float, var height: Float, rotation: Float = 0 ) extends Shape{
   private var offsetX = 0f
   private var offsetY = 0f

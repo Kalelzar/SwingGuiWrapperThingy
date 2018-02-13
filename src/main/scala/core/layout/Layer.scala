@@ -1,7 +1,8 @@
 package core.layout
 
-import java.awt.{Graphics2D, Point}
+import java.awt.Graphics2D
 
+import core.shape.helper.Point
 import core.component.BasicComponent
 
 class Layer(index: Int)(implicit layout: Layout) {
