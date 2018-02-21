@@ -1,12 +1,12 @@
 package core.component
 
 import java.awt.event.KeyEvent
-import java.awt.{Color, Graphics2D}
+import java.awt.{Color, Font, Graphics2D}
 
 import core.event.Event
-import core.event.listener.{CompleteMouseEventListener, KeyEventListener, MouseEventListener, MouseMovementEventListener}
-import core.shape.deprecated.Shape
-import core.shape.helper.Point
+import core.event.listener.{CompleteMouseEventListener, KeyEventListener}
+import core.shape.AbstractShape
+import core.util.Point
 
 trait EditableTextView extends TextView {
 
@@ -54,7 +54,7 @@ trait EditableTextView extends TextView {
       val cp = new Point(event.getData.at(1).asInstanceOf[Int], event.getData.at(2).asInstanceOf[Int])
       if(!isInside(cp) || cp.getX == mp.getX) return
 
-      val colW = <--[Int]("columnWidth")
+      val colW = columnWidth
 
       startInd = Math.min( Math.floor(
         (
@@ -84,7 +84,7 @@ trait EditableTextView extends TextView {
       if(!isInside(cp) || cp.getX == mp.getX) return
       if(!pressed) return
       val dir = mp.getX - cp.getX
-      charsToSelect = -Math.ceil(dir / <--[Int]("columnWidth")).toInt
+      charsToSelect = -Math.ceil(dir / columnWidth).toInt
       if(dir < 0) charsToSelect+=1
 
     }
@@ -186,42 +186,49 @@ trait EditableTextView extends TextView {
   private var previousTime = System.currentTimeMillis()
   private var currentTime = System.currentTimeMillis()
   override def draw(graphics2D: Graphics2D): Unit = {
-    if(!hasFocus && <--[Color]("borderColor") != <--[Shape]("shape").getFillColor) -->("borderColor", <--[Shape]("shape").getFillColor)
-    else if(hasFocus && <--[Color]("borderColor") != Color.BLACK)  -->("borderColor", Color.BLACK)
+    val shape = <--[AbstractShape]("shape")
+    val fillColor = shape.<--[Color]("fillColor")
+    val borderColor =  <--[Color]("borderColor")
+    val text = <--[String]("text")
+    val chars = <--[Int]("chars")
+    val y = <--[Float]("y")
+    val x = <--[Float]("x")
+    val textColor = <--("textColor")
+    val font = <--[Font]("font")
 
-    graphics2D.setFont(getAttribute("font"))
-    <--[Shape]("shape").draw(graphics2D)
+
+    if(!hasFocus && borderColor != fillColor)
+      -->("borderColor",fillColor)
+    else if(hasFocus && borderColor != Color.BLACK)
+      -->("borderColor", Color.BLACK)
+
+    graphics2D.setFont(font)
+    shape.draw(graphics2D)
 
 
     if(startInd >= 0){
       graphics2D.setColor(Color.decode("#6b79d6"))
       if(charsToSelect != 0)
       {
-        if(charsToSelect>0) charsToSelect = Math.min(charsToSelect, <--[String]("text").length-startInd)
+        if(charsToSelect>0) charsToSelect = Math.min(charsToSelect, text.length-startInd)
         if(charsToSelect<0) charsToSelect = Math.max(charsToSelect, -startInd)
-        println(charsToSelect)
-
-        val startRectX = (startInd - <--[Int]("chars")/ 2) * <--[Int]("columnWidth") + <--[Float]("x").toInt
-
-        val rectX = if(charsToSelect>0) startRectX else startRectX + <--[Int]("columnWidth")*charsToSelect
 
         graphics2D.fillRect(
-          rectX ,
-          <--[Float]("y").toInt - <--[Int]("columnHeight")/2,
-          <--[Int]("columnWidth")*Math.abs(charsToSelect),
-          <--[Int]("columnHeight")
+          (startInd - chars/ 2) * columnWidth + x.toInt  ,
+          y.toInt - columnHeight/2,
+          columnWidth*charsToSelect,
+          columnHeight
         )
+
       }
 
       graphics2D.setColor(Color.BLACK)
     }
 
-    graphics2D.setColor( <--("textColor") )
-    graphics2D.setFont(getAttribute("font"))
-    graphics2D.drawString(<--[String]("text"),
-      getShapeLocation.x- <--[Shape]("shape").getDimension.width/2,
-      getShapeLocation.y+ <--[Int]("columnHeight")/4)
-    graphics2D.setFont(Window.getMainWindow.getFont)
+    graphics2D.setColor(textColor)
+    graphics2D.drawString(text,
+      getShapeLocation.x - shape.getBounds.getWidth.toFloat/2,
+      getShapeLocation.y + columnHeight/4)
 
     if(currentTime-previousTime>=blinkTime){
       previousTime = currentTime
@@ -229,10 +236,10 @@ trait EditableTextView extends TextView {
     }
 
     if(caretVisible && hasFocus)
-      graphics2D.drawLine(caret.getPosition* <--[Int]("columnWidth")+(getShapeLocation.x.toInt- <--[Shape]("shape").getDimension.width/2),
-        (getShapeLocation.y- <--[Int]("columnHeight") /2.3f).toInt,
-        caret.getPosition* <--[Int]("columnWidth")+(getShapeLocation.x.toInt- <--[Shape]("shape").getDimension.width/2),
-        (getShapeLocation.y+ <--[Int]("columnHeight")/2.3f).toInt)
+      graphics2D.drawLine(caret.getPosition * columnWidth+(getShapeLocation.x - shape.getBounds.getWidth.toFloat/2).toInt,
+        (getShapeLocation.y- columnHeight /2.3f).toInt,
+        caret.getPosition* columnWidth+(getShapeLocation.x- shape.getBounds.getWidth.toFloat/2).toInt,
+        (getShapeLocation.y+ columnHeight/2.3f).toInt)
     currentTime = System.currentTimeMillis()
     graphics2D.setFont(BasicComponent.getDefaultFont)
   }

@@ -19,8 +19,7 @@ class TextMenuElement(x: Float, y: Float, var txt: String="", font: Font = Basic
   override def whenBoxed(index: Int, menu: Menu): Unit ={
     println(index)
     val mx = menu.getShapeLocation.x
-    val my = menu.getShapeLocation.y - menu.<--[Shape]("shape").getDimension.height/2 + <--[Int]("columnHeight")/2 + <--[Int]("columnHeight")*index
-
+    val my = menu.getShapeLocation.y - menu.<--[Shape]("shape").getDimension.height/2 + columnHeight/2 + columnHeight*index
     //FIXME: moveTo(new Point(mx, my))
     println(getShapeLocation)
     show()

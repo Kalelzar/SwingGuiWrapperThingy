@@ -2,6 +2,7 @@ package core.component.utils
 
 import core.component.{BasicComponent, VisualPanel}
 import core.layout.Layout
+import core.shape.AbstractShape
 
 import scala.reflect.ClassTag
 
@@ -19,9 +20,19 @@ class ComponentBuilder[T <: BasicComponent](component: T, vp : VisualPanel) {
     this
   }
 
-  def acquireReference: T = component
+  def build: Unit = {
+    component.<--[AbstractShape]("shape").build(component.<--[Float]("x"), component.<--[Float]("y"))
+  }
 
-  def acquireID: Int = BasicComponent.getID(component)
+  def acquireReference: T = {
+    build
+    component
+  }
+
+  def acquireID: Int = {
+    build
+    BasicComponent.getID(component)
+  }
 
 
 }

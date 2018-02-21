@@ -6,7 +6,6 @@ import javax.swing.{JFrame, SwingUtilities}
 
 import core.event.listener.{EventListener, FocusOnMouseListener}
 import core.event.{EventQueue, EventType}
-import core.shape.deprecated.Shape
 
 import scala.collection.mutable
 import scala.collection.mutable.Map
@@ -76,11 +75,6 @@ class Window(dimension: Dimension) extends JFrame with BasicComponent {
 
     setVisible(true)
   })
-
-  def this(shape: Shape){
-    this(shape.getDimension)
-    this.-->("shape", shape)
-  }
 
   def this(w: Int, h: Int){
     this(new Dimension(w, h))

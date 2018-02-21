@@ -6,13 +6,12 @@ import java.awt.Color
 import core.component.utils.Focus
 import core.event.Event
 import core.event.listener.MouseEventListener
-import core.shape.Rectangle
-import core.shape.deprecated.Shape
-import core.shape.helper.Point
+import core.shape.{AbstractShape, Rectangle}
+import core.util.Point
 
 class ContextMenu(var width: Float, var height: Float, parent: BasicComponent) extends Menu {
 
-  val blank = new Rectangle(0, 0, 0, 0)
+  val blank: Rectangle = AbstractShape.createShape(new Rectangle).build
   -->("shape", blank)
 
   class ContextMenuCreationListener extends MouseEventListener{
@@ -50,11 +49,13 @@ class ContextMenu(var width: Float, var height: Float, parent: BasicComponent) e
 
   def box(): Unit ={
     if(getElements.isEmpty) throw new NullPointerException("There are no elements to box")
-    val dim = getElements.head.<--[Shape]("shape").getDimension
-    if(getElements.forall(_.<--[Shape]("shape").getDimension.equals(dim))){
-      width = dim.width
-      height = dim.height*getElements.length
+    val dim = getElements.head.<--[AbstractShape]("shape").getBounds.getFrame
+
+    if(getElements.forall(_.<--[AbstractShape]("shape").getBounds.getFrame.equals(dim))){
+      width = dim.getWidth.toFloat
+      height = dim.getHeight.toFloat * getElements.length
     }
+
     var ind = 0
     iterateOverElements{ me: MenuElement =>
       me.whenBoxed(ind, this)
@@ -70,7 +71,13 @@ class ContextMenu(var width: Float, var height: Float, parent: BasicComponent) e
 
 
   def show(x: Int, y: Int): Unit ={
-    -->("shape", new Rectangle(x+width/2, y+height/2, width, height))
+    -->("shape", AbstractShape.createShape(new Rectangle)
+                              .withAttribute("width", width)
+                              .withAttribute("height", height)
+                              .withAttribute("x", x)
+                              .withAttribute("y", y)
+                              .build)
+
     -->("fill", true)
     -->("fillColor", Color.WHITE)
     box()

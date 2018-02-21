@@ -1,9 +1,8 @@
 package core.layout.utils
 
-import core.shape.helper.Point
-
 import core.component.{BasicComponent, VisualPanel}
 import core.layout.LayoutManager.LayerManager
+import core.util.Point
 
 trait Locator {
 

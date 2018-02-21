@@ -1,9 +1,9 @@
 package core.shape
 
 import java.awt._
-import java.awt.geom.{GeneralPath, Rectangle2D}
+import java.awt.geom.{AffineTransform, GeneralPath, Rectangle2D}
 
-import core.shape.helper.Point
+import core.util.Point
 
 trait BasicShape extends AbstractShape {
 
@@ -12,9 +12,29 @@ trait BasicShape extends AbstractShape {
   provide[Color]("fillColor", Color.BLACK)
   provide[Color]("borderColor", Color.BLACK)
 
+
+  override def transform(transform: AffineTransform): Unit = {
+    path.transform(transform)
+  }
+
+  override def clear(): Unit = path = new GeneralPath()
+
   override def getBounds: Rectangle2D = path.getBounds2D
 
   private var path: GeneralPath = new GeneralPath()
+  private var stored: GeneralPath = null
+
+  def store: Unit ={
+    if(stored != null) return
+    stored = path
+    path = new GeneralPath()
+  }
+
+  def restore: Unit = {
+    if(stored == null) return
+    path.append(stored, false)
+    stored = null
+  }
 
   override def draw(graphics2D: Graphics2D): Unit = {
     val rh = new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)

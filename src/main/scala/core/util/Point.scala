@@ -1,7 +1,9 @@
-package core.shape.helper
+package core.util
 
 class Point(var x: Float, var y: Float) {
 
+
+  override def toString: String = s"Point[x=$x, y=$y]"
 
   def this(){
     this(0, 0)

@@ -2,7 +2,7 @@ package core.component
 
 import java.awt.{Color, Font}
 
-import core.shape.Rectangle
+import core.shape.{AbstractShape, Rectangle}
 
 
 class TextField extends EditableTextView{
@@ -15,8 +15,13 @@ class TextField extends EditableTextView{
 
   override def refreshFontSize(font: Font): Unit = {
     super.refreshFontSize(font)
-    width = <--[Int]("chars") * <--[Int]("columnWidth")
-    -->("shape", new Rectangle( <--("x"), <--("y"), width, <--[Int]("columnHeight")))
+    width = <--[Int]("chars") * columnWidth
+    -->("shape", AbstractShape.createShape(new Rectangle)
+      .withAttribute("width", width)
+      .withAttribute("height", columnHeight)
+      .withAttribute("x", <--[Float]("x"))
+      .withAttribute("y", <--[Float]("y"))
+      .build)
     -->("fill", true)
     -->("fillColor", Color.WHITE)
   }
@@ -24,7 +29,7 @@ class TextField extends EditableTextView{
 
 
 
-  private var width = <--[Int]("chars") * <--[Int]("columnWidth")
+  private var width = <--[Int]("chars") * columnWidth
 
 
 

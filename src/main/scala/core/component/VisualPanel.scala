@@ -4,11 +4,11 @@ import java.awt.{Dimension, Graphics, Graphics2D}
 import javax.swing.JPanel
 
 import core.component.utils.ComponentBuilder
-import core.layout.utils.{AbsoluteLocator, Locator}
+import core.layout.utils.Locator
 import core.layout.{AbsoluteLayout, Layer, Layout}
-import core.shape.deprecated.Shape
 
-import scala.collection.mutable.ListBuffer
+
+
 
 /**
   * Created by kalelzar on 6/27/17.

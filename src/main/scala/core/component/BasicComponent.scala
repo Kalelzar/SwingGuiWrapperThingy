@@ -4,11 +4,8 @@ import java.awt.{Color, Font, Graphics2D}
 
 import core.component.utils.Focus
 import core.event.listener.EventListener
-import core.shape.{AbstractShape, Point2D, Rectangle}
-import core.shape.deprecated.Shape
-import core.shape.helper.Point
-import core.util.AttributeRegister
-
+import core.shape.{AbstractShape, Point2D}
+import core.util.{AttributeRegister, Point}
 import scala.collection.mutable
 
 
@@ -35,12 +32,15 @@ trait BasicComponent extends AttributeRegister{
     */
   provide[Int]("ID", BasicComponent.getID(this))
 
-  provide[AbstractShape]("shape", new Point2D(0, 0))
+  provide[AbstractShape]("shape", new Point2D)
 
   provide[Font]("font", BasicComponent.getDefaultFont)
 
-  provide[Float]("x", 0.0f)
-  provide[Float]("y", 0.0f)
+  private def updateX(x: Float): Unit = x//FIXME: moveTo(x, <--[Float]("y"))
+  private def updateY(y: Float): Unit = y//FIXME: moveTo(<--[Float]("x"), y)
+
+  provide[Float]("x", 0.0f, updateX(_))
+  provide[Float]("y", 0.0f, updateY(_))
   provide[Float]("borderThickness", 0.01f, setBorderThickness(_))
 
   provide[Boolean]("fill", false, setFill(_))

@@ -1,10 +1,10 @@
 package core.event.listener
-import core.shape.helper.Point
 
 import core.component.{BasicComponent, Window}
 import core.component.utils.Focus
 import core.event.Event
 import core.layout.LayoutManager.LayerManager
+import core.util.Point
 
 import scala.collection.mutable.ListBuffer
 

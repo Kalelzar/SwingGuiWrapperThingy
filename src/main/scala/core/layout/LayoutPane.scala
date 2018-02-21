@@ -4,7 +4,7 @@ import java.awt.Graphics2D
 
 import core.component.{BasicComponent, VisualPanel}
 import core.layout.utils.Locator
-import core.shape.helper.Point
+import core.util.Point
 
 import scala.collection.mutable
 
