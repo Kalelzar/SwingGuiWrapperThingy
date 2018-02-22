@@ -2,10 +2,11 @@ package core.shape
 
 import java.awt.geom.AffineTransform
 
+import core.animation.Transform
+
 class Rectangle extends BasicShape{
 
-  provide[Float]("width", 0f)
-  provide[Float]("height", 0f)
+
 
   override def build(x: Float, y: Float): Unit = {
     super.build(x, y)
@@ -22,17 +23,11 @@ class Rectangle extends BasicShape{
   def expand(byW: Float, byH: Float): Unit ={
     val w = <--[Float]("width")
     val h = <--[Float]("height")
-    val x = <--[Float]("x")
-    val y = <--[Float]("y")
 
-    val t = new AffineTransform()
     -->[Float]("width", <--[Float]("width")*(w+byW)/w)
     -->[Float]("height", <--[Float]("height")*(h+byH)/h)
 
-    t.translate(x, y)
-    t.scale((w+byW)/w, (h+byH)/h)
-    t.translate(-x, -y)
-    transform(t)
+    Transform(this).scaleFromCenter((w+byW)/w, (h+byH)/h)()
   }
 
 }

@@ -8,6 +8,8 @@ import core.util.{AttributeRegister, Point}
 
 trait AbstractShape extends AttributeRegister{
 
+  provide[Float]("width", 0f)
+  provide[Float]("height", 0f)
   provide[Float]("x", 0f)
   provide[Float]("y", 0f)
 
