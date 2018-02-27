@@ -1,5 +1,8 @@
-package core.animation
+package core.animation.depracated
 
+/**
+  * @deprecated
+  */
 object Direction {
 
   def apply(xmov: Float, ymov: Float): Direction = new Direction(xmov, ymov)
@@ -14,6 +17,11 @@ object Direction {
   val SOUTHWEST = Direction(-0.5f, 0.5f)
 }
 
+/**
+  * @deprecated
+  * @param xmov
+  * @param ymov
+  */
 class Direction(xmov: Float, ymov: Float) {
   def getMovX: Float = xmov
   def getMovY: Float = ymov

@@ -4,13 +4,15 @@ import java.awt.geom.AffineTransform
 
 import core.shape.AbstractShape
 
+import scala.collection.mutable.ListBuffer
+
 object Transform {
 
   def apply(shape: AbstractShape): Transform = new Transform(shape)
 
 }
 
-private final class Transform(shape: AbstractShape){
+final class Transform(shape: AbstractShape){
 
   private val transform = new AffineTransform()
   private val x = shape.<--[Float]("x")
@@ -35,22 +37,39 @@ private final class Transform(shape: AbstractShape){
 
   def rotate(angle: Float): Transform = {
     transform.rotate(angle)
+    TransformOperation(RotationOp(angle))
     this
   }
 
-  def rotate(velX: Float, velY: Float): Transform = {
-    transform.rotate(velX, velY)
+  def rotateInPlace(angle: Float): Transform = {
+    transform.rotate(angle, shape.<--[Float]("x"), shape.<--[Float]("y"))
+    TransformOperation(RotationOp(angle))
     this
   }
+
 
   def apply(): Unit = {
     shape.transform(transform)
+    shape.-->("width", shape.getBounds.getWidth.toFloat)
+    shape.-->("height", shape.getBounds.getHeight.toFloat)
+    shape.-->("x", shape.getBounds.getCenterX.toFloat)
+    shape.-->("y", shape.getBounds.getCenterY.toFloat)
+    TransformOperation.transform(shape)
   }
 
 }
 
-private sealed trait TransformOperation
+private object TransformOperation{
+  private val operations = ListBuffer[RotationOp]()
+  def apply(transformOperation: RotationOp): Unit = operations += transformOperation
+  def transform(abstractShape: AbstractShape): Unit = {
+    operations.reverseIterator.foreach(applyOperation(_, abstractShape))
+  }
+  def applyOperation(transformOperation: RotationOp, shape: AbstractShape): Unit ={
+    val rotation = shape.<--[Float]("rotation")
 
-private final case class ScaleTransformOp(sx: Float, sy: Float) extends TransformOperation
-private final case class TranslationOp(tx: Float, ty: Float) extends TransformOperation
-private final case class RotationOp(angle: Float) extends TransformOperation
+    shape.-->[Float]("rotation", rotation + transformOperation.angle)
+  }
+}
+
+private final case class RotationOp(angle: Float)

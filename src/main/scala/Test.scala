@@ -1,7 +1,6 @@
 import java.awt.{Color, Dimension, Font}
 
 import core.TestClicked
-import core.animation.{Animation, Direction, Slide}
 import core.component.utils.Focus
 import core.component._
 import core.event.SwingEventCaller.MasterSwingEventController

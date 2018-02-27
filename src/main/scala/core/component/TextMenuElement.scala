@@ -2,7 +2,7 @@ package core.component
 
 import java.awt.{Color, Font, Point}
 
-import core.shape.deprecated.Shape
+import core.shape.AbstractShape
 
 class TextMenuElement(x: Float, y: Float, var txt: String="", font: Font = BasicComponent.getDefaultFont)
   extends TextLabel with MenuElement {
@@ -19,7 +19,7 @@ class TextMenuElement(x: Float, y: Float, var txt: String="", font: Font = Basic
   override def whenBoxed(index: Int, menu: Menu): Unit ={
     println(index)
     val mx = menu.getShapeLocation.x
-    val my = menu.getShapeLocation.y - menu.<--[Shape]("shape").getDimension.height/2 + columnHeight/2 + columnHeight*index
+    val my = menu.getShapeLocation.y - menu.<--[AbstractShape]("shape").getBounds.getHeight/2 + columnHeight/2 + columnHeight*index
     //FIXME: moveTo(new Point(mx, my))
     println(getShapeLocation)
     show()

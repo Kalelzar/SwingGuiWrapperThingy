@@ -12,16 +12,16 @@ object Test2 extends App{
   Focus.giveFocus(BasicComponent.getID(w))
 
   implicit val vp: VisualPanel = new VisualPanel(new Dimension(800,600),"Square")
-  val font = new Font(Font.MONOSPACED, Font.PLAIN, 24)
+  val font = new Font(Font.MONOSPACED, Font.PLAIN, 32)
   val al = new AbsoluteLayout
-  val tl = vp.build(new TextLabel)
-    .withAttribute("x", 400f)
-    .withAttribute("y", 200f)
-    .withAttribute("layer", 3)
-    .forLayout(al)
-    .withAttribute("font", font)
-    .withAttribute("text", "Hello")
-    .acquireReference
+//  val tl = vp.build(new TextLabel)
+//    .withAttribute("x", 400f)
+//    .withAttribute("y", 200f)
+//    .withAttribute("layer", 3)
+//    .forLayout(al)
+//    .withAttribute("font", font)
+//    .withAttribute("text", "Hello")
+//    .acquireReference
 
   val tf = vp.build(new TextField)
     .withAttribute("x", 400f)
@@ -29,7 +29,7 @@ object Test2 extends App{
     .withAttribute("layer", 0)
     .forLayout(al)
     .withAttribute("limitChars", true)
-    .withAttribute("chars", 40)
+    .withAttribute("chars", 20)
     .withAttribute("font", font)
     .acquireReference
 

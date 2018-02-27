@@ -1,29 +1,39 @@
 package core.shape
-import java.awt.Dimension
-
-import core.shape.deprecated.Shape
-import core.shape.helper.AngleHelper
+import scala.collection.mutable.ListBuffer
 
 
-class RegularPolygon(startX: Float, startY: Float, sides: Int, sideLength: Int, rotation: Double = 0 ) extends Shape {
+class RegularPolygon extends BasicShape {
 
-  private val angle: Double = Math.floor((1-(2/sides.toFloat))*180 + 0.0001)
-  private val offset: Double = angle/2
+  provide[Int]("sides", 4)
+  provide[Float]("sideLength", 100f)
 
-  (0 until sides).foreach(n=>{
+  override def build(x: Float, y: Float): Unit ={
+    super.build(x, y)
+    val sides = <--[Int]("sides")
+    val angle: Double = Math.floor((1-(2/sides.toFloat))*180 + 0.0001)
 
-    val x = sideLength * Math.cos(2*Math.PI*n/sides + Math.toRadians(rotation) + Math.toRadians(offset)) + (sideLength+startX)
-    val y = sideLength * Math.sin(2*Math.PI*n/sides + Math.toRadians(rotation) + Math.toRadians(offset)) + (sideLength+startY)
+    val offset: Double = angle/2
 
-    addVertex(x.toFloat, y.toFloat)
+    var vertices = ListBuffer[(Float, Float)]()
+
+    val jump = Math.ceil(sides.toDouble/2.0-1).toInt
+
+    (0 until sides).foreach(n=>{
+
+      val xx = <--[Float]("sideLength") * Math.cos(2*Math.PI*n/sides + Math.toRadians(<--[Float]("rotation")) + Math.toRadians(offset))+ (x)
+      val yy = <--[Float]("sideLength") * Math.sin(2*Math.PI*n/sides + Math.toRadians(<--[Float]("rotation")) + Math.toRadians(offset))+ (y)
+      vertices += ((xx.toFloat, yy.toFloat))
+
+    })
 
 
-  })
 
-  pack()
+    beginAt(vertices.head._1, vertices.head._2)
+    vertices = vertices.drop(1)
+    vertices.foreach(x=>lineTo(x._1, x._2))
 
-  override def centerOnX: Float = ???
-  override def centerOnY: Float = ???
+    close
+    restore
+  }
 
-  override def getDimension: Dimension = new Dimension(sideLength, sideLength)
 }

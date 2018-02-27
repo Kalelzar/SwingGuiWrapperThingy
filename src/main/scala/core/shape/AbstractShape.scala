@@ -12,6 +12,7 @@ trait AbstractShape extends AttributeRegister{
   provide[Float]("height", 0f)
   provide[Float]("x", 0f)
   provide[Float]("y", 0f)
+  provide[Float]("rotation", 0f)
 
   def clear(): Unit
   def transform(transform: AffineTransform): Unit
@@ -22,6 +23,8 @@ trait AbstractShape extends AttributeRegister{
   def build(x: Float, y: Float): Unit = {
     -->[Float]("x", x)
     -->[Float]("y", y)
+    if(<--[Float]("width") == 0) -->[Float]("width", getBounds.getWidth.toFloat)
+    if(<--[Float]("height") == 0) -->[Float]("height", getBounds.getHeight.toFloat)
   }
 }
 

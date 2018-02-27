@@ -24,10 +24,11 @@ class Rectangle extends BasicShape{
     val w = <--[Float]("width")
     val h = <--[Float]("height")
 
-    -->[Float]("width", <--[Float]("width")*(w+byW)/w)
-    -->[Float]("height", <--[Float]("height")*(h+byH)/h)
+    val sx = (w+byW)/w
+    val sy = (h+byH)/h
 
-    Transform(this).scaleFromCenter((w+byW)/w, (h+byH)/h)()
+    Transform(this).scaleFromCenter(sx, sy)()
   }
 
+  override def toString: String = s"$getBounds"
 }

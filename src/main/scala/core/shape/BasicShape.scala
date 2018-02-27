@@ -12,11 +12,6 @@ trait BasicShape extends AbstractShape {
   provide[Color]("fillColor", Color.BLACK)
   provide[Color]("borderColor", Color.BLACK)
 
-  override def build(x: Float, y: Float): Unit = {
-    super.build(x, y)
-    if(<--[Float]("width") == 0) -->[Float]("width", getBounds.getWidth.toFloat)
-    if(<--[Float]("height") == 0) -->[Float]("height", getBounds.getHeight.toFloat)
-  }
 
   override def transform(transform: AffineTransform): Unit = {
     path.transform(transform)

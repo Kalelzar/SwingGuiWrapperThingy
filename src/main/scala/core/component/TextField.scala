@@ -7,18 +7,17 @@ import core.shape.{AbstractShape, Rectangle}
 
 class TextField extends EditableTextView{
 
-  provide[String]("text", "", onSetText(_))
+  //provide[String]("text", "", onSetText(_))
   provide[Font]("font", BasicComponent.getDefaultFont, refreshFontSize(_))
-
 
   refreshFontSize(BasicComponent.getDefaultFont)
 
   override def refreshFontSize(font: Font): Unit = {
     super.refreshFontSize(font)
     width = <--[Int]("chars") * columnWidth
-    -->("shape", AbstractShape.createShape(new Rectangle)
+    -->[AbstractShape]("shape", AbstractShape.createShape(new Rectangle)
       .withAttribute("width", width)
-      .withAttribute("height", columnHeight)
+      .withAttribute("height", columnHeight.toFloat)
       .withAttribute("x", <--[Float]("x"))
       .withAttribute("y", <--[Float]("y"))
       .build)
@@ -29,7 +28,7 @@ class TextField extends EditableTextView{
 
 
 
-  private var width = <--[Int]("chars") * columnWidth
+  private var width: Float = <--[Int]("chars") * columnWidth
 
 
 

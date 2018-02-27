@@ -7,7 +7,6 @@ class Polygram extends BasicShape {
 
   provide[Int]("sides", 4)
   provide[Float]("sideLength", 100f)
-  provide[Float]("rotation", 0f)
 
   override def build(x: Float, y: Float): Unit ={
     super.build(x, y)

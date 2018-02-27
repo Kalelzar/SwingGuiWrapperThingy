@@ -1,5 +1,6 @@
 package core.component
 
+import java.awt.geom.AffineTransform
 import java.awt.{Color, Font, FontMetrics, Graphics2D}
 
 import core.shape.AbstractShape
@@ -26,9 +27,26 @@ trait TextView extends BasicComponent{
     super.draw(graphics2D)
     graphics2D.setColor( <--("textColor") )
     graphics2D.setFont(getAttribute("font"))
-    graphics2D.drawString(<--[String]("text"),
-      getShapeLocation.x- <--[AbstractShape]("shape").getBounds.getWidth.toFloat/2,
-      getShapeLocation.y+ columnHeight/4)
+
+    val rot = <--[AbstractShape]("shape").<--[Float]("rotation")
+
+    if(rot == 0)
+      graphics2D.drawString(<--[String]("text"),
+        getShapeLocation.x- <--[AbstractShape]("shape").getBounds.getWidth.toFloat/2,
+        getShapeLocation.y+ columnHeight/4)
+    else{
+      val g2d = graphics2D.create().asInstanceOf[Graphics2D]
+      val ct = g2d.getTransform
+      ct.rotate(rot, getShapeLocation.x, getShapeLocation.y)
+      g2d.setTransform(ct)
+
+      g2d.drawString(<--[String]("text"),
+        getShapeLocation.x- <--[AbstractShape]("shape").getBounds.getWidth.toFloat/2,
+        getShapeLocation.y+ columnHeight/4)
+      g2d.dispose()
+    }
+
+
     graphics2D.setFont(Window.getMainWindow.getFont)
   }
 

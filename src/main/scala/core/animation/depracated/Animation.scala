@@ -1,9 +1,12 @@
-package core.animation
+package core.animation.depracated
 
 import core.shape.deprecated.Shape
 
 import scala.collection.mutable
 
+/**
+  * @deprecated
+  */
 object Animation {
   val animations = mutable.Map[String, Animation]()
 
@@ -13,6 +16,9 @@ object Animation {
 
 }
 
+/**
+  * @deprecated
+  */
 trait Animation {
   implicit def animation : Animation = this
   def onCreate(name: String): Unit = Animation.add(name)

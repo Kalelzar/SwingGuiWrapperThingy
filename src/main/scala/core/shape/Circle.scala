@@ -1,11 +1,11 @@
 package core.shape
-import java.awt.Dimension
-
-class Circle(startx: Float, starty: Float, radius: Int) extends RegularPolygon(startx,starty,500,radius){
 
 
-  override def centerOnX: Float = ???
-  override def centerOnY: Float = ???
+class Circle extends RegularPolygon {
+  provide[Int]("sides", 500)
+  provide[Float]("radius", 100f, updateRadius(_))
+  def updateRadius(rad: Float): Unit ={
+    -->[Float]("sideLength", rad)
+  }
 
-  override def getDimension: Dimension = new Dimension(radius, radius)
 }

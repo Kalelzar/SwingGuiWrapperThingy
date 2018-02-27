@@ -1,7 +1,14 @@
-package core.animation
+package core.animation.depracated
 
 import core.shape.deprecated.Shape
 
+/**
+  *
+  * @param direction
+  * @param dist
+  * @param frames
+  * @deprecated
+  */
 class Slide(direction: Direction, dist: Float, var frames: Int) extends Animation {
   onCreate(s"Slide $direction $dist $frames")
   val step: Float = dist/frames

@@ -1,10 +1,11 @@
 import java.awt.{Color, Dimension, Font}
 
+import core.animation.Transform
 import core.component.utils.Focus
-import core.component.{BasicComponent, ShapeComponent, VisualPanel, Window}
+import core.component._
 import core.event.SwingEventCaller.MasterSwingEventController
 import core.layout.AbsoluteLayout
-import core.shape.{AbstractShape, Polygram, Rectangle}
+import core.shape._
 
 object Test3 extends App {
 
@@ -16,21 +17,14 @@ object Test3 extends App {
   val font = new Font(Font.MONOSPACED, Font.PLAIN, 24)
   val al = new AbsoluteLayout
 
-  val tl = vp.build(
-    new ShapeComponent(
-    AbstractShape.createShape(new Rectangle)
-        .withAttribute("width",100f)
-        .withAttribute("height", 100f)
-        .build
-    )
-  )
+  val circle = vp.build(new TextField)
     .withAttribute("x", 640f)
     .withAttribute("y", 540f)
-    .withAttribute("borderColor", Color.decode("#3a85ff"))
-    .withAttribute("fillColor", Color.decode("#3a85ff"))
-    .withAttribute("fill", true)
+    .withAttribute("text", "This is a test")
+    .withAttribute("font", font)
     .forLayout(al)
     .acquireReference
+
 
 
   w.addVisualPanel(vp)
@@ -39,9 +33,16 @@ object Test3 extends App {
 
   MasterSwingEventController.startThread()
 
+  val shape = circle.<--[AbstractShape]("shape")
+
+  var dir = 5f
+
   while (true) {
     w.update()
     Thread.sleep(1000)
-    tl.<--[AbstractShape]("shape").asInstanceOf[Rectangle].expand(5, 0)
+    if(shape.<--[Float]("x") >= 960 || shape.<--[Float]("x") <= 320){
+      dir = -dir
+    }
+    Transform.apply(shape).rotateInPlace(Math.PI.toFloat/950).translate(dir, 0)()
   }
 }
