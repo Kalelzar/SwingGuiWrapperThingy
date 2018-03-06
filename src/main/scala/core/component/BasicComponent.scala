@@ -22,6 +22,8 @@ import scala.collection.mutable
   */
 trait BasicComponent extends AttributeRegister{
 
+  setComponent(this)
+
   provide[Int]("layer", 0)
 
   /**

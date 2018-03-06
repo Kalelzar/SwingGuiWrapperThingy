@@ -14,14 +14,14 @@ object Test2 extends App{
   implicit val vp: VisualPanel = new VisualPanel(new Dimension(800,600),"Square")
   val font = new Font(Font.MONOSPACED, Font.PLAIN, 32)
   val al = new AbsoluteLayout
-//  val tl = vp.build(new TextLabel)
-//    .withAttribute("x", 400f)
-//    .withAttribute("y", 200f)
-//    .withAttribute("layer", 3)
-//    .forLayout(al)
-//    .withAttribute("font", font)
-//    .withAttribute("text", "Hello")
-//    .acquireReference
+  val tl = vp.build(new TextLabel)
+    .withAttribute("x", 400f)
+    .withAttribute("y", 200f)
+    .withAttribute("layer", 3)
+    .forLayout(al)
+    .withAttribute("font", font)
+    .withAttribute("text", "Hello")
+    .acquireReference
 
   val tf = vp.build(new TextField)
     .withAttribute("x", 400f)
@@ -38,6 +38,9 @@ object Test2 extends App{
 
   w.addVisualPanel(vp)
   w.display("Square")
+
+  tl.#::
+  tf.#::
 
   MasterSwingEventController.startThread()
 

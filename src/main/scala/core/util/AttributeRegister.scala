@@ -1,5 +1,6 @@
 package core.util
 
+import core.component.BasicComponent
 import core.component.exception.AttributeNotProvidedException
 
 import scala.collection.mutable
@@ -8,6 +9,21 @@ import scala.reflect.ClassTag
 trait AttributeRegister {
   private val attributes = mutable.Map[String, Any]()
   private val attributeFunc = mutable.Map[String, Any => Unit]()
+
+  private var component: BasicComponent = _
+
+  protected def setComponent(comp: BasicComponent): Unit = component = comp
+
+  def listAttributes: String ={
+    attributes.mkString("\n")
+  }
+
+  def printAttributes: Unit ={
+    println(s"Attributes for $component:\n$listAttributes")
+  }
+
+  def <:: : String = listAttributes
+  def #:: : Unit = printAttributes
 
   def provide[R](name: String, defaultValue: R, func: R => Unit): Unit ={
     attributes(name) = defaultValue

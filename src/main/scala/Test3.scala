@@ -1,6 +1,6 @@
 import java.awt.{Color, Dimension, Font}
 
-import core.animation.Transform
+import core.animation.{Animation, Transform}
 import core.component.utils.Focus
 import core.component._
 import core.event.SwingEventCaller.MasterSwingEventController
@@ -11,6 +11,7 @@ object Test3 extends App {
 
   implicit val w: Window = new Window(1280, 1024)
   Window.setMainWindow(w)
+  w.showFramerate(true)
   Focus.giveFocus(BasicComponent.getID(w))
 
   implicit val vp: VisualPanel = new VisualPanel(new Dimension(800, 600), "Square")
@@ -37,12 +38,14 @@ object Test3 extends App {
 
   var dir = 5f
 
-  while (true) {
+  val anim = Animation.animate(circle, 120).translate(-540, 0).get
+
+
+  var frames = 0
+  anim.start()
+  while (frames < 120) {
     w.update()
-    Thread.sleep(1000)
-    if(shape.<--[Float]("x") >= 960 || shape.<--[Float]("x") <= 320){
-      dir = -dir
-    }
-    Transform.apply(shape).rotateInPlace(Math.PI.toFloat/950).translate(dir, 0)()
+    Thread.sleep(1000/Window.getFramerate)
+    frames+=1
   }
 }

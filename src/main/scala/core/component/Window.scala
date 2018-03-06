@@ -1,7 +1,7 @@
 package core.component
 
 import java.awt.image.BufferStrategy
-import java.awt.{Dimension, Graphics2D}
+import java.awt.{Dimension, Font, Graphics2D}
 import javax.swing.{JFrame, SwingUtilities}
 
 import core.event.listener.{EventListener, FocusOnMouseListener}
@@ -17,6 +17,13 @@ class Window(dimension: Dimension) extends JFrame with BasicComponent {
 
   implicit def window: Window = this
 
+  private var framerate = 60
+  def getFramerate: Int = framerate
+  def setFramerate(frames: Int) = framerate = frames
+
+  private var showFrames = false
+
+  def showFramerate(should: Boolean): Unit = showFrames = should
 
   override def toString: String = {
     //s"Has Focus: $hasFocus"
@@ -51,6 +58,8 @@ class Window(dimension: Dimension) extends JFrame with BasicComponent {
 
   def getCurrentVisualPanel: VisualPanel = panels(currentPanel)
 
+  private var last: Long = 0l
+
   def update(): Unit = {
     //println("Window update start")
     EventQueue.consumeNextEvent()
@@ -59,6 +68,15 @@ class Window(dimension: Dimension) extends JFrame with BasicComponent {
 
     g.clearRect(0, 0, getWidth, getHeight)
     cp.update(g)
+
+    if(showFrames){
+      val font = new Font(Font.MONOSPACED, Font.PLAIN, 48)
+      g.setFont(font)
+      g.drawString((1000/(System.currentTimeMillis()-last)).toString, 20, 20)
+      g.setFont(BasicComponent.getDefaultFont)
+      last = System.currentTimeMillis()
+    }
+
 
     g.dispose()
     strategy.show()
@@ -87,7 +105,8 @@ class Window(dimension: Dimension) extends JFrame with BasicComponent {
 
 object Window{
 
-
+  def getFramerate: Int = mainWindow.getFramerate
+  def setFramerate(frames: Int) = mainWindow.setFramerate(frames)
   private var mainWindow: Window = _
   private val dummyVisualPanel = new VisualPanel(new Dimension(0,0), "_Dummy")
   def getDummyVisualPanel: VisualPanel = dummyVisualPanel

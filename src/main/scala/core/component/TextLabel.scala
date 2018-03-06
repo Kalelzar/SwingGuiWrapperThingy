@@ -30,5 +30,15 @@ class TextLabel extends TextView{
     -->("borderColor", Window.getMainWindow.getBackground)
   }
 
+  override def toString: String = {
+    val s = StringBuilder.newBuilder
+    s .append("TextLabel[")
+      .append("text=")
+      .append(<--[String]("text"))
+      .append(" id=")
+      .append(<--[Int]("ID"))
+      .append("]")
+    s.mkString
+  }
 
 }
