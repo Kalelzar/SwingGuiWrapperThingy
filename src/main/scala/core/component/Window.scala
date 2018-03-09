@@ -1,9 +1,9 @@
 package core.component
 
 import java.awt.image.BufferStrategy
-import java.awt.{Dimension, Font, Graphics2D}
-import javax.swing.{JFrame, SwingUtilities}
+import java.awt.{Color, Dimension, Font, Graphics2D}
 
+import javax.swing.{JFrame, SwingUtilities}
 import core.event.listener.{EventListener, FocusOnMouseListener}
 import core.event.{EventQueue, EventType}
 
@@ -58,7 +58,7 @@ class Window(dimension: Dimension) extends JFrame with BasicComponent {
 
   def getCurrentVisualPanel: VisualPanel = panels(currentPanel)
 
-  private var last: Long = 0l
+  private var last: Long = System.currentTimeMillis()
 
   def update(): Unit = {
     //println("Window update start")
@@ -69,12 +69,22 @@ class Window(dimension: Dimension) extends JFrame with BasicComponent {
     g.clearRect(0, 0, getWidth, getHeight)
     cp.update(g)
 
-    if(showFrames){
+
+
+    if(showFrames ) {
+      val fr = System.currentTimeMillis()-last
+      if (fr != 0) {
       val font = new Font(Font.MONOSPACED, Font.PLAIN, 48)
       g.setFont(font)
-      g.drawString((1000/(System.currentTimeMillis()-last)).toString, 20, 20)
+      g.setColor(Color.RED)
+
+      g.drawString((1000 / fr).toString, 5, 60)
+
+
+      g.setColor(Color.WHITE)
       g.setFont(BasicComponent.getDefaultFont)
-      last = System.currentTimeMillis()
+      last = fr + last
+      }
     }
 
 

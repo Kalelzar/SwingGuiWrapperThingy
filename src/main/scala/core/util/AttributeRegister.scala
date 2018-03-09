@@ -50,7 +50,7 @@ trait AttributeRegister {
         case x: R => Some(x)
         case _ => None
       }.nonEmpty
-      if (!result) {
+      if (!result){
         throw new IllegalArgumentException(s"$value is a different type from ${attributes(name)}")
       }
       attributes(name) = value

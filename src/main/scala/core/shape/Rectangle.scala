@@ -30,5 +30,18 @@ class Rectangle extends BasicShape{
     Transform(this).scaleFromCenter(sx, sy)()
   }
 
-  override def toString: String = s"$getBounds"
+  override def toString: String = {
+    StringBuilder.newBuilder
+      .append("Rectangle[")
+      .append("x=")
+      .append(<--[Float]("x"))
+      .append(" y=")
+      .append(<--[Float]("y"))
+      .append(" w=")
+      .append(<--[Float]("width"))
+      .append(" h=")
+      .append(<--[Float]("height"))
+      .append("]")
+      .mkString
+  }
 }

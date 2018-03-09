@@ -12,7 +12,7 @@ object Test2 extends App{
   Focus.giveFocus(BasicComponent.getID(w))
 
   implicit val vp: VisualPanel = new VisualPanel(new Dimension(800,600),"Square")
-  val font = new Font(Font.MONOSPACED, Font.PLAIN, 32)
+  val font = new Font(Font.MONOSPACED, Font.PLAIN, 36)
   val al = new AbsoluteLayout
   val tl = vp.build(new TextLabel)
     .withAttribute("x", 400f)
@@ -33,18 +33,19 @@ object Test2 extends App{
     .withAttribute("font", font)
     .acquireReference
 
+  tf.onSubmit(x=>tl.-->[String]("text", x))
   //println(tl.getAttributes)
   //println(tf.getAttributes)
+
+  //w.showFramerate(true)
 
   w.addVisualPanel(vp)
   w.display("Square")
 
-  tl.#::
-  tf.#::
-
   MasterSwingEventController.startThread()
 
   while(true){
+    Thread.sleep(1000/60)
     w.update()
   }
 

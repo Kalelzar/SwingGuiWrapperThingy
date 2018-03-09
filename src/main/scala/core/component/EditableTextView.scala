@@ -12,7 +12,7 @@ trait EditableTextView extends TextView {
 
   provide[Int]("chars", 10)
   provide[Boolean]("limitChars", false)
-
+  provide[Color]("markColor", Color.BLUE)
 
   private var startInd = -1
   private var charsToSelect = 0
@@ -42,7 +42,6 @@ trait EditableTextView extends TextView {
 
     override def mouseClicked(event: Event): Unit = {
       val curTime = System.currentTimeMillis()
-      println(curTime)
       if(curTime-clickTime <= 300l){
         startInd = 0
         charsToSelect = <--[String]("text").length
@@ -53,9 +52,9 @@ trait EditableTextView extends TextView {
     override def mousePressed(event: Event): Unit = {
       if(event.getData.at(0).asInstanceOf[Int] != 1 ) return
       val cp = new Point(event.getData.at(1).asInstanceOf[Int], event.getData.at(2).asInstanceOf[Int])
+      val colW: Int = metrics.charWidth('m')
       if(!isInside(cp) || cp.getX == mp.getX) return
-
-      val colW = columnWidth
+      cp.translate(colW/5, 0)
 
       startInd = Math.min( Math.floor(
         (
@@ -85,7 +84,7 @@ trait EditableTextView extends TextView {
       if(!isInside(cp) || cp.getX == mp.getX) return
       if(!pressed) return
       val dir = mp.getX - cp.getX
-      charsToSelect = -Math.ceil(dir / columnWidth).toInt
+      charsToSelect = -Math.ceil(dir / metrics.charWidth('m')).toInt
       if(dir < 0) charsToSelect+=1
 
     }
@@ -121,8 +120,10 @@ trait EditableTextView extends TextView {
           onCharacterTyped(-1)
           if(caret.getPosition > <--[String]("text").length) caret.goto( <--[String]("text").length)
         }
-        if(getAscii(event)!=10)
-          return
+        if(getAscii(event)==10){
+         submit
+        }
+        return
       }
       if(<--[Boolean]("limitChars") && <--[Int]("chars") == <--[String]("text").length) return
       println(getAscii(event))
@@ -142,6 +143,8 @@ trait EditableTextView extends TextView {
   addListener(mouseListener)
 
   private val caret = new Caret
+
+  def submit
 
   def onCharacterTyped(change: Int): Unit = { }
 
@@ -196,6 +199,7 @@ trait EditableTextView extends TextView {
     val y = <--[Float]("y")
     val x = <--[Float]("x")
     val textColor = <--[Color]("textColor")
+    val markColor = <--[Color]("markColor")
     val font = <--[Font]("font")
 
 
@@ -208,9 +212,11 @@ trait EditableTextView extends TextView {
     //println(s"$getShapeLocation :: ${<--[AbstractShape]("shape").getBounds}")
     shape.draw(graphics2D)
 
+    val columnHeight = metrics.getHeight
+    val columnWidth = metrics.charWidth('m')
 
     if(startInd >= 0){
-      graphics2D.setColor(fillColor)
+      graphics2D.setColor(markColor)
       if(charsToSelect != 0)
       {
         if(charsToSelect>0) charsToSelect = Math.min(charsToSelect, text.length-startInd)
@@ -229,25 +235,24 @@ trait EditableTextView extends TextView {
 
     graphics2D.setColor(textColor)
 
+    val rot = <--[AbstractShape]("shape").<--[Float]("rotation")
 
-    //val rot = <--[AbstractShape]("shape").<--[Float]("rotation")
 
-
-    //if(rot == 0)
+    if(rot == 0)
       graphics2D.drawString(text,
         getShapeLocation.x - shape.getBounds.getWidth.toFloat/2,
         getShapeLocation.y + columnHeight/4)
-//    else{
-//      val g2d = graphics2D.create().asInstanceOf[Graphics2D]
-//      val ct = g2d.getTransform
-//      ct.rotate(rot, getShapeLocation.x, getShapeLocation.y)
-//      g2d.setTransform(ct)
-//
-//      g2d.drawString(text,
-//        getShapeLocation.x - shape.getBounds.getWidth.toFloat/2,
-//        getShapeLocation.y + columnHeight/4)
-//      g2d.dispose()
-//    }
+    else{
+      val g2d = graphics2D.create().asInstanceOf[Graphics2D]
+      val ct = g2d.getTransform
+      ct.rotate(rot, getShapeLocation.x, getShapeLocation.y)
+      g2d.setTransform(ct)
+
+      g2d.drawString(text,
+        getShapeLocation.x - shape.getBounds.getWidth.toFloat/2,
+        getShapeLocation.y + columnHeight/4)
+      g2d.dispose()
+    }
 
     if(currentTime-previousTime>=blinkTime){
       previousTime = currentTime

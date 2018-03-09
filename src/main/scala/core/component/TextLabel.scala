@@ -8,8 +8,8 @@ class TextLabel extends TextView{
   //setComponentFont(font)
   provide("text", "", onSetText)
 
-  private var width: Float = <--[String]("text").length * columnWidth
-  private var height: Float = (<--[String]("text").count(_=='\n')+1)* columnHeight
+  private var width: Float = metrics.stringWidth(<--[String]("text"))
+  private var height: Float = (<--[String]("text").count(_=='\n')+1)* metrics.getHeight
 
   onSetText("")
 
@@ -17,8 +17,8 @@ class TextLabel extends TextView{
 
   override def onSetText(newText: String): Unit = {
     refreshFontSize( <--("font"))
-    width = <--[String]("text").length * columnWidth
-    height = (<--[String]("text").count(_=='\n')+1) * columnHeight
+    width = metrics.stringWidth(<--[String]("text"))
+    height = (<--[String]("text").count(_=='\n')+1) * metrics.getHeight
 
     -->[AbstractShape]("shape", AbstractShape.createShape(new Rectangle)
       .withAttribute("width", width)
@@ -28,6 +28,7 @@ class TextLabel extends TextView{
       .build)
 
     -->("borderColor", Window.getMainWindow.getBackground)
+    #::
   }
 
   override def toString: String = {
